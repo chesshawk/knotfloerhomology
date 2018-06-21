@@ -41,12 +41,12 @@ def get_entry(x, y): #gets entry in the list of coordinates for the knot
         x = boundary_points * x
         return x + y
     else:
-        print("Out of Bounds") #come back and figure this out with exceptions
+        print("Out of Bounds") #TODO come back and figure this out with exceptions
 
 def get_back(z): #inverse of get_entry
     if z > boundary_points * (tangles - 1):
         print("Too high, bruh")
-    x = z//boundary_points
+    x = z//boundary_points  #TODO come back and figure this out with exceptions
     y = z%boundary_points
     return (x,y)
 
@@ -61,7 +61,17 @@ for i in range(caps): #coding in the caps data
         _matrix[get_entry(i-1,boundary_points-j-1)][get_entry(i,boundary_points-j-1)] = 1
         _matrix[get_entry(i,boundary_points-j-1)][get_entry(i-1,boundary_points-j-1)] = -1
 
+#Horizontal lines in the bottom half of the crossing tangles:
+for i in range(crossing_tangles):
+    for j in range(boundary_points/2):
+        _matrix[get_entry(i+caps,j)][get_entry(i+caps-1,j)] = 1
+        _matrix[get_entry(i+caps-1,j)][get_entry(i+caps,j)] = -1
 
+#The crossings themselves
+
+
+
+#Print the matrix
 for i in range((tangles - 1) * boundary_points):
     for j in range((tangles - 1) * boundary_points):
         if _matrix[i][j] != 0:
