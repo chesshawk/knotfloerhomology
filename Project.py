@@ -5,10 +5,9 @@ def get_max(list):
     maximum = 0
     for i in list:
         if abs(i) > maximum:
-            maximum = i
-    print(maximum)
-    return abs(maximum)
-sequence = [1,2,3, -4]
+            maximum = abs(i)
+    return maximum
+sequence = [1,-2]
 get_max(sequence)
 
 #supposing notation is that i corresponds to a short crossing between i and i + 1
@@ -31,8 +30,6 @@ def make_grid(list):
     for i in range(tangles-1):
         for j in range(boundary_points):
             list.append((i,j))
-            j += 1
-        i += 1
 make_grid(coordinates)
 # number of coordinates is tangles times boundaries
 _matrix = [0] * len(coordinates)
@@ -45,26 +42,25 @@ def get_entry(x, y): #gets entry in the list of coordinates for the knot
         return x + y
     else:
         print("Out of Bounds") #come back and figure this out with exceptions
+
 def get_back(z): #inverse of get_entry
-    if z > boundary_points * tangles:
+    if z > boundary_points * (tangles - 1):
         print("Too high, bruh")
     x = z//boundary_points
     y = z%boundary_points
     return (x,y)
-get_entry(13,8)
-get_back(get_entry(13,8))
+
 for i in range(caps): #coding in the caps data
     _matrix[get_entry(i,i)][get_entry(i, boundary_points - i - 1)] = 1
     _matrix[get_entry(i, boundary_points - i - 1)][get_entry(i,i)] = -1
-    _matrix[get_entry(tangles - 1 - i, boundary_points - i - 1)][get_entry(tangles - 1 - i, i)] = 1
-    _matrix[get_entry(tangles - 1 - i,i)][get_entry(tangles - 1 - i, boundary_points - i - 1)] = -1
-for i in range(tangles * boundary_points):
-    for j in range(tangles * boundary_points):
+    _matrix[get_entry(tangles - 2 - i, boundary_points - i - 1)][get_entry(tangles - 2 - i, i)] = 1
+    _matrix[get_entry(tangles - 2 - i,i)][get_entry(tangles - 2 - i, boundary_points - i - 1)] = -1
+for i in range((tangles - 1) * boundary_points):
+    for j in range((tangles - 1) * boundary_points):
         if _matrix[i][j] != 0:
-            print (get_back(i), get_back(j), _matrix[i][j])
-        j = j + 1
-    i = i + 1    
+            print (get_back(i), get_back(j), _matrix[i][j])  
     
+
 """
 j = caps
 k = 0
