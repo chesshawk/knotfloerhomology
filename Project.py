@@ -7,8 +7,7 @@ def get_max(list):
         if abs(i) > maximum:
             maximum = abs(i)
     return maximum
-sequence = [1,-2]
-get_max(sequence)
+sequence = [1,-2] #This is where you tell the program what crossings are present in the knot's tangle decomposition
 
 #supposing notation is that i corresponds to a short crossing between i and i + 1
 
@@ -61,6 +60,11 @@ for i in range(caps): #coding in the caps data
         _matrix[get_entry(i-1,boundary_points-j-1)][get_entry(i,boundary_points-j-1)] = 1
         _matrix[get_entry(i,boundary_points-j-1)][get_entry(i-1,boundary_points-j-1)] = -1
 
+        _matrix[get_entry(tangles-2-i,j)][get_entry(tangles-1-i,j)] = -1
+        _matrix[get_entry(tangles-1-i,j)][get_entry(tangles-2-i,j)] = 1
+        _matrix[get_entry(tangles-1-i,boundary_points-j-1)][get_entry(tangles-2-i,boundary_points-j-1)] = -1
+        _matrix[get_entry(tangles-2-i,boundary_points-j-1)][get_entry(tangles-1-i,boundary_points-j-1)] = 1
+
 #Horizontal lines in the bottom half of the crossing tangles:
 for i in range(crossing_tangles):
     for j in range(boundary_points/2):
@@ -68,6 +72,16 @@ for i in range(crossing_tangles):
         _matrix[get_entry(i+caps-1,j)][get_entry(i+caps,j)] = -1
 
 #The crossings themselves
+for i in range(crossing_tangles):
+    for j in range(boundary_points/2):
+        if j == abs(sequence[i]):
+            _matrix[get_entry(i+caps,boundary_points-j-1)][get_entry(i+caps-1,boundary_points-j)] = -1
+            _matrix[get_entry(i+caps-1,boundary_points-j)][get_entry(i+caps,boundary_points-j-1)] = 1
+            _matrix[get_entry(i+caps,boundary_points-j)][get_entry(i+caps-1,boundary_points-j-1)] = -1
+            _matrix[get_entry(i+caps-1,boundary_points-j-1)][get_entry(i+caps,boundary_points-j)] = 1
+        elif j+1 != abs(sequence[i]):
+            _matrix[get_entry(i+caps,boundary_points-j-1)][get_entry(i+caps-1,boundary_points-j-1)] = -1
+            _matrix[get_entry(i+caps-1,boundary_points-j-1)][get_entry(i+caps,boundary_points-j-1)] = 1
 
 
 
