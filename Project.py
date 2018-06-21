@@ -55,6 +55,13 @@ for i in range(caps): #coding in the caps data
     _matrix[get_entry(i, boundary_points - i - 1)][get_entry(i,i)] = -1
     _matrix[get_entry(tangles - 2 - i, boundary_points - i - 1)][get_entry(tangles - 2 - i, i)] = 1
     _matrix[get_entry(tangles - 2 - i,i)][get_entry(tangles - 2 - i, boundary_points - i - 1)] = -1
+    for j in range(i): 
+        _matrix[get_entry(i,j)][get_entry(i-1,j)] = 1
+        _matrix[get_entry(i-1,j)][get_entry(i,j)] = -1
+        _matrix[get_entry(i-1,boundary_points-j-1)][get_entry(i,boundary_points-j-1)] = 1
+        _matrix[get_entry(i,boundary_points-j-1)][get_entry(i-1,boundary_points-j-1)] = -1
+
+
 for i in range((tangles - 1) * boundary_points):
     for j in range((tangles - 1) * boundary_points):
         if _matrix[i][j] != 0:
