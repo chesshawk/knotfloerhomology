@@ -7,7 +7,7 @@ def get_max(list):
         if abs(i) > maximum:
             maximum = abs(i)
     return maximum
-sequence = [1] #This is where you tell the program what crossings are present in the knot's tangle decomposition
+sequence = [1,-2] #This is where you tell the program what crossings are present in the knot's tangle decomposition
 #If any element in the above array is zero I will find you and I will kill you. 
 
 #supposing notation is that i corresponds to a short crossing between i and i + 1
