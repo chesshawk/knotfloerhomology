@@ -28,7 +28,7 @@ caps = len(sequence) + 1
 
 coordinates = []
 def make_grid(list):
-    for i in range(tangles):
+    for i in range(tangles-1):
         for j in range(boundary_points):
             list.append((i,j))
             j += 1
@@ -40,7 +40,7 @@ for i in range(len(coordinates)):
     _matrix[i] = [0] * len(coordinates)
  
 def get_entry(x, y): #gets entry in the list of coordinates for the knot
-    if 0 <= x < tangles and 0 <= y < boundary_points:
+    if 0 <= x < tangles-1 and 0 <= y < boundary_points:
         x = boundary_points * x
         return x + y
     else:
