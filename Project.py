@@ -91,6 +91,24 @@ for i in range((tangles - 1) * boundary_points):
     for j in range((tangles - 1) * boundary_points):
         if _matrix[i][j] != 0:
             print (get_back(i), get_back(j), _matrix[i][j])  
+
+#Need to see the convention for the crossings but here we will give each crossing a coordinate. Check the convention...
+crossing_coord = []
+for i in range(len(sequence)):
+    if sequence[i] > 0:
+        crossing_coord.append((caps - 1 + i + 0.75, boundary_points - sequence[i] - 0.5))
+    else:
+        crossing_coord.append((caps - 1 + i + 0.25, boundary_points + sequence[i] - 0.5))
+print (crossing_coord)
+#Tells if crossing is over or under
+def is_over(x):
+    if sequence[x - 1] > 0:
+        return True
+    else:
+        return False
+print (is_over(2))
+
+
     
 
 
