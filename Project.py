@@ -218,13 +218,31 @@ def is_idempotent(a): #for a list of bijections
             return False
     return True
 
-#b is any bijection. Returns an array of all the possible bijections that it can be next to in a grid state
+''' 
 def grid_state(b):
     grid_state = []
     for i in range(boundary_points + 1):
         for j in range(len(all_bijections(a)[i])):
+            print(i,j)
             if set(image(b)).isdisjoint(set(domain(all_bijections(a)[i][j]))):
                 grid_state.append(all_bijections(a)[i][j])
     return grid_state
+    '''
 
-    
+#b is any bijection. Returns an array of all the possible bijections that it can be next to in a grid state
+
+def grid_state(b):
+    grid_state = []
+    points = []
+    for i in range(boundary_points+1):
+        points.append(i-0.5)
+    new_domain = set(points).difference(image(b))
+    new_ranges = list(itertools.permutations(points,len(new_domain)))
+    for i in range(len(new_ranges)):
+        bij = list(itertools.izip_longest(new_domain,new_ranges[i]))
+        grid_state.append(bij)
+
+    return grid_state
+
+print(grid_state([(-0.5,0.5),(1.5,2.5)]))
+
