@@ -8,6 +8,8 @@ def get_max(list):
         if abs(i) > maximum:
             maximum = abs(i)
     return maximum
+#/ over \ is a + in the sequence, \ over / is a - in the sequence
+
 sequence = [1] #This is where you tell the program what crossings are present in the knot's tangle decomposition
 #If any element in the above array is zero I will find you and I will kill you. 
 
@@ -216,7 +218,11 @@ def is_idempotent(a): #for a list of bijections
             return False
     return True
 
-
-
+def grid_state(b):
+    grid_state = []
+    for i in range(boundary_points + 1):
+        for j in range(len(all_bijections(a)[i])):
+            if set(image(b)).isdisjoint(set(domain(all_bijections(a)[i][j]))):
+                grid_state.append(all_bijections(a)[i][j])
 
     
