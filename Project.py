@@ -212,7 +212,7 @@ def is_idempotent_generator(a): #for a generator
 
 def is_idempotent(a): #for a list of bijections 
     for i in range(len(a)) :
-        if not isIdempotentGenerator(a[i]):
+        if not is_idempotent_generator(a[i]):
             return False
     return True
 
