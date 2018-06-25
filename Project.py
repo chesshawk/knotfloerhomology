@@ -50,6 +50,11 @@ def get_back(z): #inverse of get_entry
     x = z//boundary_points  #TODO come back and figure this out with exceptions
     y = z%boundary_points
     return (x,y)
+def connected(x,y): #Input is two coordinates
+    if _matrix[get_entry(list(x)[0], list(x)[1])][get_entry(list(y)[0],list(y)[1])] != 0:
+        return True
+    else:
+        return False
 
 for i in range(caps): #coding in the caps data
     _matrix[get_entry(i,i)][get_entry(i, boundary_points - i - 1)] = 1
@@ -131,9 +136,15 @@ def all_bijections (a):
         all_bij.append(sub_bijections_list(a[i]))
     return all_bij
 # The ordered pairs have left coordinates domains and right coordinates images.
-"""
-need code to parse bijections better
-"""
+
+def get_index(element): #Inputs an element in the algebra (list of tuples) and outputs the index in the list all bijections. Returns a tuple.
+    return (len(element),all_bijections(a)[len(element)].index(element))
+def get_element(x, y): #Given a tuple of positive integers returns the corresponding bijection.
+    if x >= len(all_bijections(a)) or y >= len(all_bijections(a)[x]):
+        print ("nope")
+    else:
+        return all_bijections(a)[x][y]
+
 # Coding the multiplcation of algebra elements. I.e. the concatenations.
 
 def domain (a): #For domain need to input a list of tuples or all_bijections then 2 indices. Returns a set. 
@@ -148,44 +159,46 @@ def image (a): #Similar to domain method
         image.append(list(a[i])[1])
     image = set(image)
     return image
-"""
-rewrite the above methods so that you do not need to index the full bijections list
-"""
 
-print (all_bijections(a)[2][4])
-print (domain(all_bijections(a)[2][4]))
-print (image(all_bijections(a)[2][4]))
-
+def bsc(x,y): #Short for black strand crossing. This tells us if there is a crossing between two black strands in the algebra strand diagrams.
+    if (list(x)[0] < list(y)[0] and list(x)[1] > list(y)[1]) or (list(x)[0] > list(y)[0] and list(x)[1] < list(y)[1]):
+        return True
+def dbsc(a,b): #Tells if there is a double crossing between two bijections. Input is two bijections. 
+    for i in range(len(a)):
+        for j in range(len(a)):
+            for k in range(len(b)):
+                for l in range(len(b)):
+                    if bsc(a[i], a[j]) and bsc(b[k], b[l]) and a[i][1] == b[k][0] and a[j][1] == b[l][0]:
+                        return True
 def alg_mult (a, b): #imput is two elements of all_bij a[number of elements][bijection]
     product = []
     if len(a) != len(b):
         return 0
     elif image(a) != domain(b):
         return 0
+    elif dbsc(a,b):
+        return 0
     else:
         for i in range(len(a)):
             product.append((list(a[i])[0],list(b[i])[1]))
-    return product
-               
-print (all_bijections(a)[2][0])
-print (all_bijections(a)[2][1])
-print (alg_mult(all_bijections(a)[2][0], all_bijections(a)[2][1]))
-print (all_bijections(a)[2].index(alg_mult(all_bijections(a)[2][0], all_bijections(a)[2][1])))
-
-def get_index(element): #Inputs an element in the algebra (list of tuples) and outputs the index in the list all bijections. Returns a tuple.
-    return (len(element),all_bijections(a)[len(element)].index(element))
-print(get_index(alg_mult(all_bijections(a)[2][0], all_bijections(a)[2][1])))
-print (get_index([(0,1),(1,2),(2,3)]))
-def get_element(x, y): #Given a tuple of positive integers returns the corresponding bijection.
-    if x >= len(all_bijections(a)) or y >= len(all_bijections(a)[x]):
-        print ("nope")
-    else:
-        return all_bijections(a)[x][y]
-print (get_element(3,91))
+    return product            
 
 
+#We consider a sum of non-zero elements in the algebera to be given by a list/array of bijections. Here is a method to multiply sums.
+# Remember, each bijection is a list of tuples! So the arguments here are lists of lists of tuples! How fun!
 
-    
+def mul_sum(a,b):
+    prod_sum = []
+    for i in range(len(a)):
+        for j in range(len(b)):
+            if alg_mult(a[i], b[j]) != 0:
+                prod_sum.append(alg_mult(a[i],b[j]))
+    return prod_sum
+
+"""
+What needs to be done is to continue to work with the alg_mult method in order to take into account the modular relationships as discussed.
+"""
+
 
 
 
