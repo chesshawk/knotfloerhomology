@@ -114,8 +114,8 @@ def is_positive(x):
         return False
 
 s = []
-for i in range(boundary_points):
-    s.append(i)
+for i in range(boundary_points+1):
+    s.append(i-0.5)
 def findsubsets(S,m):
     return set(itertools.permutations(S,m))
 a = []
@@ -204,16 +204,19 @@ What needs to be done is to continue to work with the alg_mult method in order t
 """
 
 
-def isIdempotentGenerator(a): #for a generator
+def is_idempotent_generator(a): #for a generator
     for i in range(len(a)):    
         if list(a[i])[0] != list(a[i])[1]:
             return False
     return True
 
-def isIdempotent(a): #for a list of bijections 
+def is_idempotent(a): #for a list of bijections 
     for i in range(len(a)) :
         if not isIdempotentGenerator(a[i]):
             return False
     return True
+
+
+
 
     
