@@ -218,11 +218,13 @@ def is_idempotent(a): #for a list of bijections
             return False
     return True
 
+#b is any bijection. Returns an array of all the possible bijections that it can be next to in a grid state
 def grid_state(b):
     grid_state = []
     for i in range(boundary_points + 1):
         for j in range(len(all_bijections(a)[i])):
             if set(image(b)).isdisjoint(set(domain(all_bijections(a)[i][j]))):
                 grid_state.append(all_bijections(a)[i][j])
+    return grid_state
 
     
