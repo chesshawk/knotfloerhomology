@@ -126,7 +126,7 @@ def sub_bijections_list(b):
     bijlist = []
     for i in range(len(b)):
         for j in range(len(b)):
-            bij = list(itertools.zip_longest(b[i],b[j]))
+            bij = list(itertools.izip_longest(b[i],b[j]))
             bijlist.append(bij)
     return bijlist
  
@@ -180,7 +180,11 @@ def alg_mult (a, b): #imput is two elements of all_bij a[number of elements][bij
         return 0
     else:
         for i in range(len(a)):
-            product.append((list(a[i])[0],list(b[i])[1]))
+            ind = 0
+            for j in range(len(b)):
+                if(list(b[j])[0] == list(a[i])[1]):
+                    ind = j
+            product.append((list(a[i])[0],list(b[ind])[1]))
     return product            
 
 
@@ -200,7 +204,6 @@ What needs to be done is to continue to work with the alg_mult method in order t
 """
 
 
-
-
+#print(alg_mult([(0,2),(1,1)],[(1,0),(2,2)]))
     
     
