@@ -204,6 +204,16 @@ What needs to be done is to continue to work with the alg_mult method in order t
 """
 
 
-#print(alg_mult([(0,2),(1,1)],[(1,0),(2,2)]))
-    
+def isIdempotentGenerator(a): #for a generator
+    for i in range(len(a)):    
+        if list(a[i])[0] != list(a[i])[1]:
+            return False
+    return True
+
+def isIdempotent(a): #for a list of bijections 
+    for i in range(len(a)) :
+        if not isIdempotentGenerator(a[i]):
+            return False
+    return True
+
     
