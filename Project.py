@@ -26,7 +26,7 @@ print(tangles)
 
 crossing_tangles = len(sequence) #number of tangles with a cross
 
-caps = len(sequence) + 1
+caps = get_max(sequence) + 1
 
 coordinates = []
 def make_grid(list):
@@ -288,5 +288,6 @@ def alg_diff(b): #Differential for a single element. Need to code in the modular
             j += 1
     return diff
 
-print (alg_diff([(-0.5,3.5), (0.5, 1.5), (2.5, 0.5)]))              
+print (alg_diff([(-0.5,3.5), (0.5, 1.5), (2.5, 0.5)]))   
+
 
