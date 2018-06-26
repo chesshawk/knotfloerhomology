@@ -251,7 +251,20 @@ def allowable_grid_state(b):
 
     return grid_state
 
-
+def alg_diff_modulo(b,i,j):
+    c = domain(b)
+    if b[i][0] < b[j][0] and b[i][1] > b[j][1]:
+        for k in range(b[i][0]+1,b[j][0]):
+            if k in c:
+                l = c.index(k)
+                if b[l][1] in range(b[j][1]+1,b[i][1]):
+                    return True
+    elif b[i][0] > b[j][0] and b[i][1] < b[j][1]:
+        for k in range(b[j][0]+1,b[i][0]):
+            if k in c:
+                l = c.index(k)
+                if b[l][1] in range(b[i][1]+1,b[j][1]):
+                    return True
 
 def alg_diff(b): #Differential for a single element. Need to code in the modular relations. 
     diff = []
@@ -268,8 +281,10 @@ def alg_diff(b): #Differential for a single element. Need to code in the modular
                 d.append(num1)
                 d.remove(b[j])
                 d.append(num2)
-                diff.append(d)
+                if ! alg_diff_modulo(b,i,j):
+                    diff.append(d)
             j += 1
     return diff
+
 print (alg_diff([(-0.5,3.5), (0.5, 1.5), (2.5, 0.5)]))              
 
