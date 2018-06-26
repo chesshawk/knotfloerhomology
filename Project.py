@@ -10,7 +10,7 @@ def get_max(list):
     return maximum
 #/ over \ is a + in the sequence, \ over / is a - in the sequence
 
-sequence = [-1,2,4] #This is where you tell the program what crossings are present in the knot's tangle decomposition
+sequence = [1] #This is where you tell the program what crossings are present in the knot's tangle decomposition
 #If any element in the above array is zero I will find you and I will kill you. 
 
 #supposing notation is that i corresponds to a short crossing between i and i + 1
@@ -128,7 +128,7 @@ def sub_bijections_list(b):
     bijlist = []
     for i in range(len(b)):
         for j in range(len(b)):
-            bij = list(itertools.izip_longest(b[i],b[j]))
+            bij = list(itertools.zip_longest(b[i],b[j]))
             bijlist.append(bij)
     return bijlist
  
@@ -225,7 +225,6 @@ def is_idempotent(a): #for a list of bijections
             return False
     return True
 
-
 ''' 
 def grid_state(b):
     grid_state = []
@@ -247,38 +246,47 @@ def allowable_grid_state(b):
     new_domain = set(points).difference(image(b))
     new_ranges = list(itertools.permutations(points,len(new_domain)))
     for i in range(len(new_ranges)):
-        bij = list(itertools.izip_longest(new_domain,new_ranges[i]))
+        bij = list(itertools.zip_longest(new_domain,new_ranges[i]))
         grid_state.append(bij)
 
     return grid_state
 
-#gets the sign sequence at the left edge of tangle i
-#if you give me some stupid shit with no crossings I WILL BE ANGRY
-#This is still slow as balls but I'm trying
-def sign_sequence(i):
-    signs = [0] * boundary_points
-    for j in range(boundary_points):
-        for dexin in range(3*boundary_points):
-            k = dexin + (i-1)*boundary_points
-            if _matrix[get_entry(i,j)][k] != 0:
-                if _matrix[get_entry(i,j)][k] == 1 and list(get_back(k))[0] < i:
-                    signs[j] = -1
-                    break
-                elif _matrix[get_entry(i,j)][k] == -1 and list(get_back(k))[0] < i:
-                    signs[j] = 1
-                    break
-                elif _matrix[get_entry(i,j)][k] == 1 and list(get_back(k))[0] > i:
-                    signs[j] = 1
-                    break
-                elif _matrix[get_entry(i,j)][k] == -1 and list(get_back(k))[0] > i:
-                    signs[j] = -1
-                    break
+def alg_diff_modulo(b,i,j):
+    c = domain(b)
+    if b[i][0] < b[j][0] and b[i][1] > b[j][1]:
+        for k in range(int(b[i][0]+0.5),int(b[j][0]-0.5)):
+            p = k + 0.5
+            if p in c:
+                l = c.index(p)
+                if b[j][1] < b[l][1] < b[i][1]:
+                    return True
+    elif b[i][0] > b[j][0] and b[i][1] < b[j][1]:
+        for k in range(int(b[j][0]+0.5),int(b[i][0]-0.5)):
+            p = k + 0.5
+            if p in c:
+                l = c.index(p)
+                if b[i][1] < b[l][1] < b[j][1]:
+                    return True
 
-    return signs
+def alg_diff(b): #Differential for a single element. Need to code in the modular relations. 
+    diff = []
+    for i in range(len(b)):
+        j = i + 1
+        while j < len(b):
+            d = []
+            for k in range(len(b)):
+                d.append(b[k])
+            if  bsc(b[i], b[j]):
+                num1 = (list(b[i])[0], list(b[j])[1])
+                num2 = (list(b[j])[0], list(b[i])[1])
+                d.remove(b[i])
+                d.append(num1)
+                d.remove(b[j])
+                d.append(num2)
+                if not alg_diff_modulo(b,i,j):
+                    diff.append(d)
+            j += 1
+    return diff
 
-
-print(sign_sequence(2))
-
-
-#print(allowable_grid_state([(-0.5,0.5),(1.5,2.5)]))
+print (alg_diff([(-0.5,3.5), (0.5, 1.5), (2.5, 0.5)]))              
 
