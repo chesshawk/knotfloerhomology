@@ -128,7 +128,7 @@ def sub_bijections_list(b):
     bijlist = []
     for i in range(len(b)):
         for j in range(len(b)):
-            bij = list(itertools.izip_longest(b[i],b[j]))
+            bij = list(itertools.zip_longest(b[i],b[j]))
             bijlist.append(bij)
     return bijlist
  
@@ -246,11 +246,30 @@ def allowable_grid_state(b):
     new_domain = set(points).difference(image(b))
     new_ranges = list(itertools.permutations(points,len(new_domain)))
     for i in range(len(new_ranges)):
-        bij = list(itertools.izip_longest(new_domain,new_ranges[i]))
+        bij = list(itertools.zip_longest(new_domain,new_ranges[i]))
         grid_state.append(bij)
 
     return grid_state
 
 
-print(allowable_grid_state([(-0.5,0.5),(1.5,2.5)]))
+
+def alg_diff(b): #Differential for a single element. Need to code in the modular relations. 
+    diff = []
+    for i in range(len(b)):
+        j = i + 1
+        while j < len(b):
+            d = []
+            for k in range(len(b)):
+                d.append(b[k])
+            if  bsc(b[i], b[j]):
+                num1 = (list(b[i])[0], list(b[j])[1])
+                num2 = (list(b[j])[0], list(b[i])[1])
+                d.remove(b[i])
+                d.append(num1)
+                d.remove(b[j])
+                d.append(num2)
+                diff.append(d)
+            j += 1
+    return diff
+print (alg_diff([(-0.5,3.5), (0.5, 1.5), (2.5, 0.5)]))              
 
