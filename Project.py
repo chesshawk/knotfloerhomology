@@ -238,6 +238,34 @@ def grid_state(b):
 
 #b is any bijection. Returns an array of all the possible bijections that it can be next to in a grid state
 
+#gets the sign sequence at the left edge of tangle i
+#if you give me some stupid shit with no crossings I WILL BE ANGRY
+#This is still slow as balls but I'm trying
+def sign_sequence(i):
+    signs = [0] * boundary_points
+    for j in range(boundary_points):
+        for dexin in range(3*boundary_points):
+            k = dexin + (i-1)*boundary_points
+            if _matrix[get_entry(i,j)][k] != 0:
+                if _matrix[get_entry(i,j)][k] == 1 and list(get_back(k))[0] < i:
+                    signs[j] = -1
+                    break
+                elif _matrix[get_entry(i,j)][k] == -1 and list(get_back(k))[0] < i:
+                    signs[j] = 1
+                    break
+                elif _matrix[get_entry(i,j)][k] == 1 and list(get_back(k))[0] > i:
+                    signs[j] = 1
+                    break
+                elif _matrix[get_entry(i,j)][k] == -1 and list(get_back(k))[0] > i:
+                    signs[j] = -1
+                    break
+
+    return signs
+
+
+print(sign_sequence(2))
+
+
 def allowable_grid_state(b):
     grid_state = []
     points = []
