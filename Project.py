@@ -153,13 +153,11 @@ def domain (a): #For domain need to input a list of tuples or all_bijections the
     domain = []
     for i in range(len(a)):
         domain.append(list(a[i])[0])
-    domain = set(domain)
     return domain
 def image (a): #Similar to domain method
     image = []
     for i in range(len(a)):
         image.append(list(a[i])[1])
-    image = set(image)
     return image
 
 def bsc(x,y): #Short for black strand crossing. This tells us if there is a crossing between two black strands in the algebra strand diagrams.
@@ -172,21 +170,30 @@ def dbsc(a,b): #Tells if there is a double crossing between two bijections. Inpu
                 for l in range(len(b)):
                     if bsc(a[i], a[j]) and bsc(b[k], b[l]) and a[i][1] == b[k][0] and a[j][1] == b[l][0]:
                         return True
+def asc(a,b):
+    for i in range(len(a)):
+        if a[i][0] < a[i][1]:
+            if a[i][1] in domain(b):
+                k = domain(b).index(a[i][1])
+                if b[k][0] > b[k][1]:
+                    return True
+        if a[i][0] > a[i][1]:
+            if a[i][1] in domain(b):
+                l = domain(b).index(a[i][1])
+                if b[l][0] < b[l][1]:
+                    return True
+    
 def alg_mult (a, b): #imput is two elements of all_bij a[number of elements][bijection]
     product = []
-    if len(a) != len(b):
-        return 0
-    elif image(a) != domain(b):
+    if image(a) != domain(b):
         return 0
     elif dbsc(a,b):
         return 0
+    elif asc(a,b):
+        return 0
     else:
         for i in range(len(a)):
-            ind = 0
-            for j in range(len(b)):
-                if(list(b[j])[0] == list(a[i])[1]):
-                    ind = j
-            product.append((list(a[i])[0],list(b[ind])[1]))
+            product.append((list(a[i])[0],list(b[i])[1]))
     return product            
 
 
