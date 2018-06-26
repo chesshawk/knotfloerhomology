@@ -231,7 +231,7 @@ def grid_state(b):
 
 #b is any bijection. Returns an array of all the possible bijections that it can be next to in a grid state
 
-def grid_state(b):
+def allowable_grid_state(b):
     grid_state = []
     points = []
     for i in range(boundary_points+1):
@@ -244,5 +244,6 @@ def grid_state(b):
 
     return grid_state
 
-print(grid_state([(-0.5,0.5),(1.5,2.5)]))
+
+print(allowable_grid_state([(-0.5,0.5),(1.5,2.5)]))
 
