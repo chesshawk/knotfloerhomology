@@ -241,27 +241,26 @@ def grid_state(b):
 #gets the sign sequence at the left edge of tangle i
 #if you give me some stupid shit with no crossings I WILL BE ANGRY
 #This is still slow as balls but I'm trying
-def sign_sequence(index):
-    i = index + 1
+
+def sign_sequence(i):
     signs = [0] * boundary_points
     for j in range(boundary_points):
-        for fuck in range(3):
-            dexin = fuck + j - 1
-            k = dexin + (i-1)*boundary_points
-            if _matrix[get_entry(i,j)][k] != 0:
-                if _matrix[get_entry(i,j)][k] == 1 and list(get_back(k))[0] < i:
-                    signs[j] = -1
-                    break
-                elif _matrix[get_entry(i,j)][k] == -1 and list(get_back(k))[0] < i:
-                    signs[j] = 1
-                    break
-                elif _matrix[get_entry(i,j)][k] == 1 and list(get_back(k))[0] > i:
-                    signs[j] = 1
-                    break
-                elif _matrix[get_entry(i,j)][k] == -1 and list(get_back(k))[0] > i:
-                    signs[j] = -1
-                    break
+        
+        if 0 <= i-1 < tangles-1 and 0 <= j-1 < boundary_points and signs[j] == 0:
+            signs[j] = -1 * _matrix[get_entry(i,j)][get_entry(i-1,j-1)] 
+        if 0 <= i-1 < tangles-1 and 0 <= j < boundary_points and signs[j] == 0:        
+            signs[j] = -1 * _matrix[get_entry(i,j)][get_entry(i-1,j)] 
+        if 0 <= i-1 < tangles-1 and 0 <= j+1 < boundary_points and signs[j] == 0:        
+            signs[j] = -1 * _matrix[get_entry(i,j)][get_entry(i-1,j+1)] 
 
+        if 0 <= i+1 < tangles-1 and 0 <= j-1 < boundary_points and signs[j] == 0:
+            signs[j] = 1 * _matrix[get_entry(i,j)][get_entry(i+1,j-1)] 
+        if 0 <= i+1 < tangles-1 and 0 <= j < boundary_points and signs[j] == 0:        
+            signs[j] = 1 * _matrix[get_entry(i,j)][get_entry(i+1,j)] 
+        if 0 <= i+1 < tangles-1 and 0 <= j+1 < boundary_points and signs[j] == 0:        
+            signs[j] = 1 * _matrix[get_entry(i,j)][get_entry(i+1,j+1)] 
+            
+    
     return signs
 
 
@@ -317,5 +316,5 @@ def alg_diff(b): #Differential for a single element. Need to code in the modular
 
 print (alg_diff([(-0.5,3.5), (0.5, 1.5), (2.5, 0.5)]))   
 
-for i in range(tangles-2):
-    print(sign_sequence(i))
+for i in range(tangles-1):
+    print(i,sign_sequence(i))
