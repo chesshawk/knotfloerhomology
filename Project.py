@@ -10,7 +10,7 @@ def get_max(list):
     return maximum
 #/ over \ is a + in the sequence, \ over / is a - in the sequence
 
-sequence = [1] #This is where you tell the program what crossings are present in the knot's tangle decomposition
+sequence = [-1,2] #This is where you tell the program what crossings are present in the knot's tangle decomposition
 #If any element in the above array is zero I will find you and I will kill you. 
 
 #supposing notation is that i corresponds to a short crossing between i and i + 1
@@ -241,10 +241,12 @@ def grid_state(b):
 #gets the sign sequence at the left edge of tangle i
 #if you give me some stupid shit with no crossings I WILL BE ANGRY
 #This is still slow as balls but I'm trying
-def sign_sequence(i):
+def sign_sequence(index):
+    i = index + 1
     signs = [0] * boundary_points
     for j in range(boundary_points):
-        for dexin in range(3*boundary_points):
+        for fuck in range(3):
+            dexin = fuck + j - 1
             k = dexin + (i-1)*boundary_points
             if _matrix[get_entry(i,j)][k] != 0:
                 if _matrix[get_entry(i,j)][k] == 1 and list(get_back(k))[0] < i:
@@ -261,9 +263,6 @@ def sign_sequence(i):
                     break
 
     return signs
-
-
-print(sign_sequence(2))
 
 
 def allowable_grid_state(b):
@@ -318,4 +317,5 @@ def alg_diff(b): #Differential for a single element. Need to code in the modular
 
 print (alg_diff([(-0.5,3.5), (0.5, 1.5), (2.5, 0.5)]))   
 
-
+for i in range(tangles-2):
+    print(sign_sequence(i))
