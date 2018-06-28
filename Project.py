@@ -461,18 +461,11 @@ def right_heegard(i):
 
     return left
 
-
-print(sign_sequence(0))
-print(tangles-2)
-print(right_heegard(0))
-print(left_heegard(0))
-print(right_heegard(1))
-print(left_heegard(1))
-print(right_heegard(2))
-print(left_heegard(2))
-print(right_heegard(3))
-print(left_heegard(3))
-
+#Prints all the Heegard diagrams from cap to cap. The first list of lists printed corresponds to the right grid on the Heegard diagram for the first cap
+def print_heegard():
+    for i in range(tangles-1):
+        print(right_heegard(i))
+        print(left_heegard(i))
 
 
 
@@ -494,4 +487,8 @@ def gradings_alg(b, c): #Takes a bijection and a tangle. And returns an ordered 
                 left_cross += 1
     print(num_cross, right_cross, left_cross)
     return (num_cross - right_cross,(left_cross - right_cross)/2)
+
+
+print_heegard()
+
 
