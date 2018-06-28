@@ -463,8 +463,13 @@ def right_heegard(i):
 
 #Prints all the Heegard diagrams from cap to cap. The first list of lists printed corresponds to the right grid on the Heegard diagram for the first cap
 def print_heegard():
+    print("First Cap:")
     for i in range(tangles-1):
         print(right_heegard(i))
+        if i != tangles -2:
+            print("Tangle between", i, "and", i+1)
+        else:
+            print("Last Cap:")
         print(left_heegard(i))
 
 
