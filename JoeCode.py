@@ -349,5 +349,21 @@ def gradings_alg(b, c): #Takes a bijection and a tangle. And returns an ordered 
         for l in range(boundary_points//2):
             if min(list(b[i])[0], list(b[i])[1]) < l < max(list(b[i])[0], list(b[i])[1]) and sign_sequence(c)[l] == -1:
                 left_cross += 1
-    print(num_cross, right_cross, left_cross)
     return (num_cross - right_cross,(left_cross - right_cross)/2)
+
+def grid_state_grading(b, c): #Takes a single partial bijection and a tangle and returns the gradings. Right now only Alexander grading. 
+    alex = list(gradings_alg(b,c))[1]
+    if caps <= c < tangles - caps: #Check to see if this is correct...
+        alex += 1
+    for i in range(boundary_points):
+        if sign_sequence(c)[i] == -1:
+            alex += 1
+    return alex
+def full_grid_grading(b):
+    alex = 0
+    if len(b) != tangles:
+        print("Not a full state")
+    else:
+        for i in range(boundary_points):
+            alex += grid_state_grading(b[i],i)
+    return alex
