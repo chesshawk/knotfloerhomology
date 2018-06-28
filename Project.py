@@ -333,3 +333,22 @@ print("rt")
 for i in range(tangles-1):
     print(i,sign_sequence(i))
 
+def gradings_alg(b, c): #Takes a bijection and a tangle. And returns an ordered pair of the maslov and alexander gradings.
+    num_cross = 0
+    right_cross = 0
+    left_cross = 0
+    for i in range(len(b)):
+        j = i + 1
+        while j < len(b):
+            if bsc(b[i],b[j]):
+                num_cross += 1
+            j +=1 
+        for k in range(boundary_points//2, boundary_points):  
+            if min(list(b[i])[0], list(b[i])[1]) < k < max(list(b[i])[0], list(b[i])[1]) and sign_sequence(c)[k] == 1 :
+                right_cross += 1
+        for l in range(boundary_points//2):
+            if min(list(b[i])[0], list(b[i])[1]) < l < max(list(b[i])[0], list(b[i])[1]) and sign_sequence(c)[l] == -1:
+                left_cross += 1
+    print(num_cross, right_cross, left_cross)
+    return (num_cross - right_cross,(left_cross - right_cross)/2)
+
