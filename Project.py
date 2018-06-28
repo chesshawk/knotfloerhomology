@@ -10,7 +10,7 @@ def get_max(list):
     return maximum
 #/ over \ is a + in the sequence, \ over / is a - in the sequence
 
-sequence = [-1] #This is where you tell the program what crossings are present in the knot's tangle decomposition
+sequence = [-1,3] #This is where you tell the program what crossings are present in the knot's tangle decomposition
 #If any element in the above array is zero I will find you and I will kill you. 
 
 #supposing notation is that i corresponds to a short crossing between i and i + 1
@@ -463,6 +463,7 @@ def right_heegard(i):
 
 #Prints all the Heegard diagrams from cap to cap. The first list of lists printed corresponds to the right grid on the Heegard diagram for the first cap
 def print_heegard():
+    print("see code to understand how to interpret output. each tangle has a left grid and a right grid ")
     print("First Cap:")
     for i in range(tangles-1):
         print(right_heegard(i))
