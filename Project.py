@@ -10,7 +10,7 @@ def get_max(list):
     return maximum
 #/ over \ is a + in the sequence, \ over / is a - in the sequence
 
-sequence = [-5,3] #This is where you tell the program what crossings are present in the knot's tangle decomposition
+sequence = [-1,2] #This is where you tell the program what crossings are present in the knot's tangle decomposition
 #If any element in the above array is zero I will find you and I will kill you. 
 
 #supposing notation is that i corresponds to a short crossing between i and i + 1
@@ -268,7 +268,7 @@ def sign_sequence(i):
 
         if 0 <= i+1 < tangles-1 and 0 <= j-1 < boundary_points and signs[j] == 0:
             signs[j] = 1 * _matrix[get_entry(i,j)][get_entry(i+1,j-1)] 
-
+        if 0 <= i+1 < tangles-1 and 0 <= j < boundary_points and signs[j] == 0:
             signs[j] = 1 * _matrix[get_entry(i,j)][get_entry(i+1,j)] 
         if 0 <= i+1 < tangles-1 and 0 <= j+1 < boundary_points and signs[j] == 0:        
             signs[j] = 1 * _matrix[get_entry(i,j)][get_entry(i+1,j+1)] 
@@ -329,6 +329,7 @@ def alg_diff(b): #Differential for a single element. Need to code in the modular
 
 print (alg_diff([(-0.5,3.5), (0.5, 1.5), (2.5, 0.5)]))   
 
+print("rt")
 for i in range(tangles-1):
     print(i,sign_sequence(i))
 
