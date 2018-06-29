@@ -350,7 +350,27 @@ def gradings_alg(b, c): #Takes a bijection and a tangle. And returns an ordered 
             if min(list(b[i])[0], list(b[i])[1]) < l < max(list(b[i])[0], list(b[i])[1]) and sign_sequence(c)[l] == -1:
                 left_cross += 1
     return (num_cross - right_cross,(left_cross - right_cross)/2)
-
+def left_maz(b, c): #Left Mazlov for the grid states.
+    lmaz = 0
+    for i in range(len(b)):
+        j = i + 1
+        while j < len(b):
+            if bsc(b[i],b[j]):
+                lmaz += 1
+            j +=1
+    for l in range(boundary_points//2):
+            if min(list(b[i])[0], list(b[i])[1]) < l < max(list(b[i])[0], list(b[i])[1]) and sign_sequence(c)[l] == -1:
+                lmaz += 1
+    for k in range(boundary_points):
+        if sign_sequence(c)[k] == -1:
+            lmaz += 1
+    return lmaz
+        
+def right_maz(b,c): #Right Mazlov for the grid states.
+    rmaz = list(gradings_alg(b,c))[0]
+    if caps <= c < tangles - caps:
+        rmaz += 1
+    return rmaz
 def grid_state_grading(b, c): #Takes a single partial bijection and a tangle and returns the gradings. Right now only Alexander grading. 
     alex = list(gradings_alg(b,c))[1]
     if caps <= c < tangles - caps: #Check to see if this is correct...
@@ -367,3 +387,8 @@ def full_grid_grading(b):
         for i in range(boundary_points):
             alex += grid_state_grading(b[i],i)
     return alex
+
+
+
+
+
