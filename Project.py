@@ -10,7 +10,7 @@ def get_max(list):
     return maximum
 #/ over \ is a + in the sequence, \ over / is a - in the sequence
 
-sequence = [1,1,1] #This is where you tell the program what crossings are present in the knot's tangle decomposition
+sequence = [1,-2] #This is where you tell the program what crossings are present in the knot's tangle decomposition
 #If any element in the above array is zero I will find you and I will kill you. 
 
 #supposing notation is that i corresponds to a short crossing between i and i + 1
@@ -141,7 +141,7 @@ def sub_bijections_list(b):
     bijlist = []
     for i in range(len(b)):
         for j in range(len(b)):
-            bij = list(itertools.zip_longest(b[i],b[j]))
+            bij = list(itertools.izip_longest(b[i],b[j]))
             bijlist.append(bij)
     return bijlist
  
@@ -551,5 +551,25 @@ def full_grid_grading(b):
         for i in range(boundary_points):
             alex += grid_state_grading(b[i],i)
     return alex
+
+'''
+#Given two bijections l and r (for the left and right grid states of a generator of CT(T) for a given elementary tangle), spits out the differential computed using Heegard diagrams 
+def grid_state_differential_heegard_generator(l,r):
+    for i in range(len(all_bijections)):
+'''
+
+
+print(a)
+
+print(all_bijections(a))
+
+
+for i in range(tangles-2):
+    print gradings_alg([(0.5,4.5),(1.5,3.5),(3.5,2.5),(2.5,1.5),(4.5,-0.5)],i)
+
+
+
+
+
 
 

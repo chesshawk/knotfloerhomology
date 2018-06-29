@@ -351,7 +351,7 @@ def gradings_alg(b, c): #Takes a bijection and a tangle. And returns an ordered 
                 left_cross += 1
     return (num_cross - right_cross,(left_cross - right_cross)/2)
 def left_maz(b, c): #Left Mazlov for the grid states.
-    lmaz = 0
+    lmaz = 0 
     for i in range(len(b)):
         j = i + 1
         while j < len(b):
