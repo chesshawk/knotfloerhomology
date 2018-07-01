@@ -399,26 +399,39 @@ def alpha_betas(t): # takes a strand and gives the coordinates of the alpha and 
             mid_coords.append((t-1.5, i- 0.5))
             right_coords.append((t-1, i- 0.5))
             return [left_coords, mid_coords, right_coords]
-    elif t = 1:
-        mid_coords.append((-0.5,-0.5),(-0.5, boundary_points - 0.5))
-        right_coords.append((0,-0.5),(0, (boundary_points - 1)/2),(0, boundary_points - 0.5))
+    elif t == 1:
+        mid_coords.append((-0.5,-0.5))
+        mid_coords.append((-0.5, boundary_points - 0.5))
+        right_coords.append((0,-0.5))
+        right_coords.append((0, (boundary_points - 1)/2))
+        right_coords.append((0, boundary_points - 0.5))
         return [mid_coords, right_coords]
-    elif t = tangles:
-        mid_coords.append(((tangles - 1.5, -0.5),(tangles - 1.5, boundary_points - 0.5)))
-        left_coords.append((tangles - 2, -0.5),(tangles - 2, (boundary_points- 1)/2), (tangles - 2, boundary_points - 0.5))
+    elif t == tangles:
+        mid_coords.append((tangles - 1.5, -0.5))
+        mid_coords.append((tangles - 1.5, boundary_points - 0.5))
+        left_coords.append((tangles - 2, -0.5))
+        left_coords.append((tangles - 2, (boundary_points- 1)/2))
+        left_coords.append((tangles - 2, boundary_points - 0.5))
         return [left_coords, mid_coords]
     elif t < caps:
-        left_coords = alpha_betas(t-1)[2]
+        if t ==2:
+            left_coords = alpha_betas(t-1)[1]
+        else:
+            left_coords = alpha_betas(t-1)[2]
         for i in range(t):
-            mid_coords.append((t-1.5,-0.5 + i), (t-1.5, boundary_points - 0.5 - i))
-            right_coords.append((t-1,-0.5 + i), (t-1, boundary_points - 0.5 - i))
+            mid_coords.append((t-1.5,-0.5 + i)) 
+            mid_coords.append((t-1.5, boundary_points - 0.5 - i))
+            right_coords.append((t-1,-0.5 + i))
+            right_coords.append((t-1, boundary_points - 0.5 - i))
         right_coords.append((t-1, (boundary_points-1)/2))
         return [left_coords, mid_coords, right_coords]
     elif t >= tangles - caps:
         right_coords = alpha_betas(t+1)[0]
         for i in range(t):
-            mid_coords.append((t-1.5,-0.5 + i), (t-1.5, boundary_points - 0.5 - i))
-            left_coords.append((t-1,-0.5 + i), (t-1, boundary_points - 0.5 - i))
+            mid_coords.append((t-1.5,-0.5 + i))
+            mid_coords.append((t-1.5, boundary_points - 0.5 - i))
+            left_coords.append((t-1,-0.5 + i))
+            left_coords.append((t-1, boundary_points - 0.5 - i))
         left_coords.append((t-1, (boundary_points-1)/2))
         return [left_coords, mid_coords, right_coords]
 
