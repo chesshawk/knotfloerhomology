@@ -436,7 +436,11 @@ def alpha_betas_helper(u):
         return ev
     elif 0 <= u < caps-1:
         i = 0
-        while i < 2+u:
+        if (2*u)%2 == 0:
+            lim = 2+u
+        else:
+            lim = 2+u-0.5
+        while i < lim:
             ev.append((u,-0.5+i))
             i = i+1
         if (2*u)%2 == 0:
@@ -450,7 +454,12 @@ def alpha_betas_helper(u):
     elif tangles-1-caps < u <= tangles-2:
         wall = tangles-2-u
         i = 0
-        while i < 2+wall:
+        if (2*wall)%2 == 0:
+            lim = 2+wall
+        else:
+            lim = 2+wall-0.5
+
+        while i < lim:
             ev.append((u,-0.5+i))
             i = i+1
         if (2*wall)%2 == 0:
@@ -673,7 +682,7 @@ def print_heegard():
         else:
             print("Last Cap:")
         print(left_heegard(i))
-'''
+
 #Next thing to do is to generate all the gridstates as bijections. Can do it given an individual tangle?
 def halves(t): #Inputs a tangle and returns the halves of each tangle and their bijections.
     left_half = []
@@ -697,13 +706,12 @@ def gs(t): #Outputs the possible grid states for a tangle.
             for j in range(len(halves(t)[0][i])):
                 for h in range(len(halves(t)[1][k])):
                     if set(image(halves(t)[0][i][j])).isdisjoint(domain(halves(t)[1][k][h])):
-                        print("yup")
+                        print("yup",i,k,j,h,[halves(t)[0][i][j], halves(t)[1][k][h]])
                         state.append([halves(t)[0][i][j], halves(t)[1][k][h]])
             k -=1
     return state
-print(gs(1)[2])
 
-'''
+
 
 
 '''
@@ -721,6 +729,8 @@ print("ryounday",boundary_points)
 for i in range(tangles):
     print(i)
     print(alpha_betas(i))
+
+print(halves(1))
 
 
 #print_heegard()
