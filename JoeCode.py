@@ -470,5 +470,44 @@ def gs(t): #Outputs the possible grid states for a tangle.
                         state.append([halves(t)[0][i][j], halves(t)[1][k][h]])
             k -=1
     return state
-print(gs(1)[2])
+
+def ralg_diff(b): #Reverse of algebra. Need to factor in the modular relationships, Same as del-. Introduces a crossing between two strands that do not have one and sums.
+    diff = []
+    for i in range(len(b)):
+        j = i + 1
+        while j < len(b):
+            d = []
+            for k in range(len(b)):
+                d.append(b[k])
+            if  not(bsc(b[i], b[j])):
+                num1 = (list(b[i])[0], list(b[j])[1])
+                num2 = (list(b[j])[0], list(b[i])[1])
+                d.remove(b[i])
+                d.append(num1)
+                d.remove(b[j])
+                d.append(num2)
+                diff.append(d)
+            j += 1
+        
+    return diff
+
+def switch(b,c): #Takes a grid state and reveses that shit like dm. Slide up into my dm's mwah. Edit this to take in a grid state hot and fresh from the method.
+    switch = []
+    for i in range(len(b)):
+        for j in range(len(c)):
+            d = []
+            e = []
+            for k in range(len(b)):
+                d.append(b[k])
+            for k in range(len(c)):
+                e.append(c[k])
+            num1 = (list(b[i])[0], list(c[j])[0])
+            num2 = (list(b[i])[1], list(c[j])[1])
+            d.remove(b[i])
+            d.append(num1)
+            e.remove(c[j])
+            e.append(num2)
+            switch.append([d,e])
+        j +=1
+    return switch
 
