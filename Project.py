@@ -724,7 +724,7 @@ def grid_state_differential_heegard_generator(l,r):
 
 print("caps",caps)
 print("tangles",tangles)
-print("ryounday",boundary_points)
+print("boundary points",boundary_points)
 
 for i in range(tangles):
     print(i)
