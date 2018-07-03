@@ -653,6 +653,36 @@ def print_heegard():
             print("Last Cap:")
         print(left_heegard(i))
 
+#Next thing to do is to generate all the gridstates as bijections. Can do it given an individual tangle?
+def halves(t): #Inputs a tangle and returns the halves of each tangle and their bijections.
+    left_half = []
+    right_half = []
+    if t != tangles:
+        for i in range(min(len(alpha_betas(t)[0]), len(alpha_betas(t)[1])) + 1):
+            left_half.append(list(modified_sub_bijections_list(list(findsubsets(alpha_betas(t)[0],i)),list(findsubsets(alpha_betas(t)[1],i)))))
+        for k in range(min(len(alpha_betas(t)[1]), len(alpha_betas(t)[2])) + 1):
+            right_half.append(modified_sub_bijections_list(list(findsubsets(alpha_betas(t)[1],k)),list(findsubsets(alpha_betas(t)[2],k))))
+        return[left_half, right_half]
+    else:
+        for i in range(min(len(alpha_betas(t)[0]), len(alpha_betas(t)[1])) + 1):
+            left_half.append(modified_sub_bijections_list(list(findsubsets(alpha_betas(t)[0],i)),list(findsubsets(alpha_betas(t)[1],i))))
+        return[left_half]
+#The indexing is thus... First left or right, sie of bijection and then the bijection itself then the elements of the bijection... Need to list it to get the actual images out. 
+def gs(t): #Outputs the possible grid states for a tangle.
+    state = []
+    for i in range(len(halves(t)[0])):
+        k = len(alpha_betas(t)[1]) - i
+        while k >= 0:
+            for j in range(len(halves(t)[0][i])):
+                for h in range(len(halves(t)[1][k])):
+                    if set(image(halves(t)[0][i][j])).isdisjoint(domain(halves(t)[1][k][h])):
+                        print("yup")
+                        state.append([halves(t)[0][i][j], halves(t)[1][k][h]])
+            k -=1
+    return state
+print(gs(1)[2])
+
+
 
 
 '''
@@ -660,6 +690,9 @@ def print_heegard():
 def grid_state_differential_heegard_generator(l,r):
     for i in range(len(all_bijections)):
 '''
+
+
+
 print("caps",caps)
 print("tangles",tangles)
 print("ryounday",boundary_points)
