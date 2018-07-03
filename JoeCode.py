@@ -144,7 +144,13 @@ def sub_bijections_list(b):
             bij = list(itertools.zip_longest(b[i],b[j]))
             bijlist.append(bij)
     return bijlist
- 
+def modified_sub_bijections_list(b,c):
+    bijlist = []
+    for i in range(len(b)):
+        for j in range(len(c)):
+            bij = list(itertools.zip_longest(b[i],c[j]))
+            bijlist.append(bij)
+    return bijlist
 def all_bijections (a):
     all_bij = []
     for i in range(len(a)):
@@ -405,7 +411,8 @@ def alpha_betas(t): # takes a strand and gives the coordinates of the alpha and 
         right_coords.append((0,-0.5))
         right_coords.append((0, (boundary_points - 1)/2))
         right_coords.append((0, boundary_points - 0.5))
-        return [mid_coords, right_coords]
+        left_coords.append((-1, (boundary_points - 1)/2))
+        return [left_coords, mid_coords, right_coords]
     elif t == tangles:
         mid_coords.append((tangles - 1.5, -0.5))
         mid_coords.append((tangles - 1.5, boundary_points - 0.5))
@@ -434,8 +441,33 @@ def alpha_betas(t): # takes a strand and gives the coordinates of the alpha and 
             left_coords.append((t-1, boundary_points - 0.5 - i))
         left_coords.append((t-1, (boundary_points-1)/2))
         return [left_coords, mid_coords, right_coords]
-
-
-
-
+#Note: need to figure out if I am to include the left coordinates for the first tangle...
+#Next thing to do is to generate all the gridstates as bijections. Can do it given an individual tangle?
+def halves(t): #Inputs a tangle and returns the halves of each tangle and their bijections.
+    left_half = []
+    right_half = []
+    if t != tangles:
+        for i in range(min(len(alpha_betas(t)[0]), len(alpha_betas(t)[1])) + 1):
+            left_half.append(list(modified_sub_bijections_list(list(findsubsets(alpha_betas(t)[0],i)),list(findsubsets(alpha_betas(t)[1],i)))))
+        for k in range(min(len(alpha_betas(t)[1]), len(alpha_betas(t)[2])) + 1):
+            right_half.append(modified_sub_bijections_list(list(findsubsets(alpha_betas(t)[1],k)),list(findsubsets(alpha_betas(t)[2],k))))
+        return[left_half, right_half]
+    else:
+        for i in range(min(len(alpha_betas(t)[0]), len(alpha_betas(t)[1])) + 1):
+            left_half.append(modified_sub_bijections_list(list(findsubsets(alpha_betas(t)[0],i)),list(findsubsets(alpha_betas(t)[1],i))))
+        return[left_half]
+#The indexing is thus... First left or right, sie of bijection and then the bijection itself then the elements of the bijection... Need to list it to get the actual images out. 
+def gs(t): #Outputs the possible grid states for a tangle.
+    state = []
+    for i in range(len(halves(t)[0])):
+        k = len(alpha_betas(t)[1]) - i
+        while k >= 0:
+            for j in range(len(halves(t)[0][i])):
+                for h in range(len(halves(t)[1][k])):
+                    if set(image(halves(t)[0][i][j])).isdisjoint(domain(halves(t)[1][k][h])):
+                        print("yup")
+                        state.append([halves(t)[0][i][j], halves(t)[1][k][h]])
+            k -=1
+    return state
+print(gs(1)[2])
 
