@@ -1,3 +1,4 @@
+
 import itertools
 sequence = []
 #import a signed sequence

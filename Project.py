@@ -278,6 +278,7 @@ def sign_sequence(i):
 
 
 def allowable_grid_state(b):
+    #TODO Remove points that are empty
     grid_state = []
     points = []
     for i in range(boundary_points+1):
@@ -326,6 +327,182 @@ def alg_diff(b): #Differential for a single element. Need to code in the modular
                     diff.append(d)
             j += 1
     return diff
+
+
+
+def gradings_alg(b, c): #Takes a bijection and a tangle. And returns an ordered pair of the maslov and alexander gradings.
+    num_cross = 0
+    right_cross = 0
+    left_cross = 0
+    for i in range(len(b)):
+        j = i + 1
+        while j < len(b):
+            if bsc(b[i],b[j]):
+                num_cross += 1
+            j +=1 
+        for k in range(boundary_points//2, boundary_points):  
+            if min(list(b[i])[0], list(b[i])[1]) < k < max(list(b[i])[0], list(b[i])[1]) and sign_sequence(c)[k] == 1 :
+                right_cross += 1
+        for l in range(boundary_points//2):
+            if min(list(b[i])[0], list(b[i])[1]) < l < max(list(b[i])[0], list(b[i])[1]) and sign_sequence(c)[l] == -1:
+                left_cross += 1
+    print(num_cross, right_cross, left_cross)
+    return (num_cross - right_cross,(left_cross - right_cross)/2)
+
+
+#Here are all the gradings we need. Might need to take a look again later...
+def gradings_alg(b, c): #Takes a bijection and a tangle. And returns an ordered pair of the maslov and alexander gradings.
+    num_cross = 0
+    right_cross = 0
+    left_cross = 0
+    for i in range(len(b)):
+        j = i + 1
+        while j < len(b):
+            if bsc(b[i],b[j]):
+                num_cross += 1
+            j +=1 
+        for k in range(boundary_points//2, boundary_points):  
+            if min(list(b[i])[0], list(b[i])[1]) < k < max(list(b[i])[0], list(b[i])[1]) and sign_sequence(c)[k] == 1 :
+                right_cross += 1
+        for l in range(boundary_points//2):
+            if min(list(b[i])[0], list(b[i])[1]) < l < max(list(b[i])[0], list(b[i])[1]) and sign_sequence(c)[l] == -1:
+                left_cross += 1
+    return (num_cross - right_cross,(left_cross - right_cross)/2)
+def left_maz(b, c): #Left Mazlov for the grid states.
+    lmaz = 0
+    for i in range(len(b)):
+        j = i + 1
+        while j < len(b):
+            if bsc(b[i],b[j]):
+                lmaz += 1
+            j +=1
+    for l in range(boundary_points//2):
+            if min(list(b[i])[0], list(b[i])[1]) < l < max(list(b[i])[0], list(b[i])[1]) and sign_sequence(c)[l] == -1:
+                lmaz += 1
+    for k in range(boundary_points):
+        if sign_sequence(c)[k] == -1:
+            lmaz += 1
+    return lmaz
+        
+def right_maz(b,c): #Right Mazlov for the grid states.
+    rmaz = list(gradings_alg(b,c))[0]
+    if caps <= c < tangles - caps:
+        rmaz += 1
+    return rmaz
+def grid_state_grading(b, c): #Takes a single partial bijection and a tangle and returns the gradings. Right now only Alexander grading. 
+    alex = list(gradings_alg(b,c))[1]
+    if caps <= c < tangles - caps: #Check to see if this is correct...
+        alex += 1
+    for i in range(boundary_points):
+        if sign_sequence(c)[i] == -1:
+            alex += 1
+    return alex
+def full_grid_grading(b):
+    alex = 0
+    if len(b) != tangles:
+        print("Not a full state")
+    else:
+        for i in range(boundary_points):
+            alex += grid_state_grading(b[i],i)
+    return alex
+
+ # takes a half-integer and gives the alpha or beta curves at that point.
+ # u = 0 corresponds to A^0 and will give you the 0th alpha curves on the line containing points with coordinates (0,0) (0,1), etc.
+ # u = 0.5 corresponds to B^0
+ # u = 1 corresponds to A^1
+ # and so on
+def alpha_betas_helper(u):
+    ev = []
+    if 0 <= u < caps-1:
+        i = 0
+        while i < 2+u:
+            ev.append((u,-0.5+i))
+            i = i+1
+        if (2*u)%2 == 0:
+            i = 2+u-1
+        else:
+            i = 2+u-1-0.5
+        while i > -1:
+            ev.append((u,boundary_points-0.5-i))
+            i = i-1
+        return ev
+    elif tangles-1-caps < u <= tangles-2:
+        wall = tangles-2-u
+        i = 0
+        while i < 2+wall:
+            ev.append((u,-0.5+i))
+            i = i+1
+        if (2*wall)%2 == 0:
+            i = 2+wall-1
+        else:
+            i = 2+wall-1-0.5
+        while i > -1:
+            ev.append((u,boundary_points-0.5-i))
+            i = i-1
+        return ev
+
+    elif caps-1 <= u <= tangles-1-caps:
+        for i in range(boundary_points+1):
+            ev.append((u,i-0.5))
+        return ev
+    else:
+        #print("wtf no ew. index out of bounds. no alpha no beta here.")
+        return ev
+
+#for grid states...
+def alpha_betas(t): # takes a strand and gives the coordinates of the alpha and beta curves in the strand version of the grid diagram. A tangle is given by the right most coordinate.
+    return [alpha_betas_helper(t-1),alpha_betas_helper(t-0.5),alpha_betas_helper(t)]
+
+
+'''
+#for grid states...
+def alpha_betas(t): # takes a strand and gives the coordinates of the alpha and beta curves in the strand version of the grid diagram. A tangle is given by the right most coordinate.
+    left_coords = []
+    mid_coords = []
+    right_coords = []
+    if caps <= t < tangles - caps:
+        for i in range(boundary_points + 1):
+            left_coords.append((t - 2, i-0.5))
+            mid_coords.append((t-1.5, i- 0.5))
+            right_coords.append((t-1, i- 0.5))
+        return [left_coords, mid_coords, right_coords]
+    elif t == 1:
+        mid_coords.append((-0.5,-0.5))
+        mid_coords.append((-0.5, boundary_points - 0.5))
+        right_coords.append((0,-0.5))
+        right_coords.append((0, (boundary_points - 1)/2))
+        right_coords.append((0, boundary_points - 0.5))
+        left_coords.append((-1,(boundary_points)/2))
+        return [left_coords, mid_coords, right_coords]
+    elif t == tangles:
+        mid_coords.append((tangles - 1.5, -0.5))
+        mid_coords.append((tangles - 1.5, boundary_points - 0.5))
+        left_coords.append((tangles - 2, -0.5))
+        left_coords.append((tangles - 2, (boundary_points- 1)/2))
+        left_coords.append((tangles - 2, boundary_points - 0.5))
+        return [left_coords, mid_coords]
+    elif t < caps:
+        if t ==2:
+            left_coords = alpha_betas(t-1)[1]
+        else:
+            left_coords = alpha_betas(t-1)[2]
+            for i in range(t):
+                mid_coords.append((t-1.5,-0.5 + i)) 
+                mid_coords.append((t-1.5, boundary_points - 0.5 - i))
+                right_coords.append((t-1,-0.5 + i))
+                right_coords.append((t-1, boundary_points - 0.5 - i))
+        right_coords.append((t-1, (boundary_points-1)/2))
+        return [left_coords, mid_coords, right_coords]
+    elif t >= tangles - caps:
+        right_coords = alpha_betas(t+1)[0]
+        for i in range(t):
+            mid_coords.append((t-1.5,-0.5 + i))
+            mid_coords.append((t-1.5, boundary_points - 0.5 - i))
+            left_coords.append((t-1,-0.5 + i))
+            left_coords.append((t-1, boundary_points - 0.5 - i))
+        left_coords.append((t-1, (boundary_points-1)/2))
+        return [left_coords, mid_coords, right_coords]
+'''
 
 #HOW TO USE HEEGARD METHODS
 
@@ -406,6 +583,9 @@ def left_heegard(i):
 #gives the right Heegard diagram immediately to the left of i on the grid. For example, right_heegard(0) gives us the first cap
 def right_heegard(i):
     ss = sign_sequence(i)
+
+
+
     left = [""] * boundary_points
     crosses = False
     crosspoint = -100
@@ -475,98 +655,21 @@ def print_heegard():
 
 
 
-def gradings_alg(b, c): #Takes a bijection and a tangle. And returns an ordered pair of the maslov and alexander gradings.
-    num_cross = 0
-    right_cross = 0
-    left_cross = 0
-    for i in range(len(b)):
-        j = i + 1
-        while j < len(b):
-            if bsc(b[i],b[j]):
-                num_cross += 1
-            j +=1 
-        for k in range(boundary_points//2, boundary_points):  
-            if min(list(b[i])[0], list(b[i])[1]) < k < max(list(b[i])[0], list(b[i])[1]) and sign_sequence(c)[k] == 1 :
-                right_cross += 1
-        for l in range(boundary_points//2):
-            if min(list(b[i])[0], list(b[i])[1]) < l < max(list(b[i])[0], list(b[i])[1]) and sign_sequence(c)[l] == -1:
-                left_cross += 1
-    print(num_cross, right_cross, left_cross)
-    return (num_cross - right_cross,(left_cross - right_cross)/2)
-
-
-print_heegard()
-#Here are all the gradings we need. Might need to take a look again later...
-def gradings_alg(b, c): #Takes a bijection and a tangle. And returns an ordered pair of the maslov and alexander gradings.
-    num_cross = 0
-    right_cross = 0
-    left_cross = 0
-    for i in range(len(b)):
-        j = i + 1
-        while j < len(b):
-            if bsc(b[i],b[j]):
-                num_cross += 1
-            j +=1 
-        for k in range(boundary_points//2, boundary_points):  
-            if min(list(b[i])[0], list(b[i])[1]) < k < max(list(b[i])[0], list(b[i])[1]) and sign_sequence(c)[k] == 1 :
-                right_cross += 1
-        for l in range(boundary_points//2):
-            if min(list(b[i])[0], list(b[i])[1]) < l < max(list(b[i])[0], list(b[i])[1]) and sign_sequence(c)[l] == -1:
-                left_cross += 1
-    return (num_cross - right_cross,(left_cross - right_cross)/2)
-def left_maz(b, c): #Left Mazlov for the grid states.
-    lmaz = 0
-    for i in range(len(b)):
-        j = i + 1
-        while j < len(b):
-            if bsc(b[i],b[j]):
-                lmaz += 1
-            j +=1
-    for l in range(boundary_points//2):
-            if min(list(b[i])[0], list(b[i])[1]) < l < max(list(b[i])[0], list(b[i])[1]) and sign_sequence(c)[l] == -1:
-                lmaz += 1
-    for k in range(boundary_points):
-        if sign_sequence(c)[k] == -1:
-            lmaz += 1
-    return lmaz
-        
-def right_maz(b,c): #Right Mazlov for the grid states.
-    rmaz = list(gradings_alg(b,c))[0]
-    if caps <= c < tangles - caps:
-        rmaz += 1
-    return rmaz
-def grid_state_grading(b, c): #Takes a single partial bijection and a tangle and returns the gradings. Right now only Alexander grading. 
-    alex = list(gradings_alg(b,c))[1]
-    if caps <= c < tangles - caps: #Check to see if this is correct...
-        alex += 1
-    for i in range(boundary_points):
-        if sign_sequence(c)[i] == -1:
-            alex += 1
-    return alex
-def full_grid_grading(b):
-    alex = 0
-    if len(b) != tangles:
-        print("Not a full state")
-    else:
-        for i in range(boundary_points):
-            alex += grid_state_grading(b[i],i)
-    return alex
-
 '''
 #Given two bijections l and r (for the left and right grid states of a generator of CT(T) for a given elementary tangle), spits out the differential computed using Heegard diagrams 
 def grid_state_differential_heegard_generator(l,r):
     for i in range(len(all_bijections)):
 '''
+print("caps",caps)
+print("tangles",tangles)
+print("ryounday",boundary_points)
+
+for i in range(tangles):
+    print(i)
+    print(alpha_betas(i))
 
 
-print(a)
-
-print(all_bijections(a))
-
-
-for i in range(tangles-2):
-    print gradings_alg([(0.5,4.5),(1.5,3.5),(3.5,2.5),(2.5,1.5),(4.5,-0.5)],i)
-
+#print_heegard()
 
 
 
