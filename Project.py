@@ -144,6 +144,13 @@ def sub_bijections_list(b):
             bij = list(itertools.izip_longest(b[i],b[j]))
             bijlist.append(bij)
     return bijlist
+def modified_sub_bijections_list(b,c):
+    bijlist = []
+    for i in range(len(b)):
+        for j in range(len(c)):
+            bij = list(itertools.izip_longest(b[i],c[j]))
+            bijlist.append(bij)
+    return bijlist
  
 def all_bijections (a):
     all_bij = []
@@ -413,7 +420,21 @@ def full_grid_grading(b):
  # and so on
 def alpha_betas_helper(u):
     ev = []
-    if 0 <= u < caps-1:
+    if u == -1:
+        ev.append((u, 0.5*(boundary_points-1)))
+        return ev
+    elif u == tangles-1:
+        ev.append((u, 0.5*(boundary_points-1)))
+        return ev
+    elif u == tangles-1.5:
+        ev.append((u,-0.5))
+        ev.append((u,boundary_points-0.5))
+        return ev
+    elif u == -0.5:
+        ev.append((u,-0.5))
+        ev.append((u,boundary_points-0.5))
+        return ev
+    elif 0 <= u < caps-1:
         i = 0
         while i < 2+u:
             ev.append((u,-0.5+i))
@@ -652,7 +673,7 @@ def print_heegard():
         else:
             print("Last Cap:")
         print(left_heegard(i))
-
+'''
 #Next thing to do is to generate all the gridstates as bijections. Can do it given an individual tangle?
 def halves(t): #Inputs a tangle and returns the halves of each tangle and their bijections.
     left_half = []
@@ -682,7 +703,7 @@ def gs(t): #Outputs the possible grid states for a tangle.
     return state
 print(gs(1)[2])
 
-
+'''
 
 
 '''
