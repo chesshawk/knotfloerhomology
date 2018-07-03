@@ -689,9 +689,11 @@ def halves(t): #Inputs a tangle and returns the halves of each tangle and their 
     right_half = []
     if t != tangles:
         for i in range(min(len(alpha_betas(t)[0]), len(alpha_betas(t)[1])) + 1):
-            left_half.append(list(modified_sub_bijections_list(list(findsubsets(alpha_betas(t)[0],i)),list(findsubsets(alpha_betas(t)[1],i)))))
+            if not(t == 0 and i == 0):
+                left_half.append(list(modified_sub_bijections_list(list(findsubsets(alpha_betas(t)[0],i)),list(findsubsets(alpha_betas(t)[1],i)))))
         for k in range(min(len(alpha_betas(t)[1]), len(alpha_betas(t)[2])) + 1):
-            right_half.append(modified_sub_bijections_list(list(findsubsets(alpha_betas(t)[1],k)),list(findsubsets(alpha_betas(t)[2],k))))
+            if not(t == tangles-1 and i == 0):
+                right_half.append(modified_sub_bijections_list(list(findsubsets(alpha_betas(t)[1],k)),list(findsubsets(alpha_betas(t)[2],k))))
         return[left_half, right_half]
     else:
         for i in range(min(len(alpha_betas(t)[0]), len(alpha_betas(t)[1])) + 1):
@@ -700,14 +702,17 @@ def halves(t): #Inputs a tangle and returns the halves of each tangle and their 
 #The indexing is thus... First left or right, sie of bijection and then the bijection itself then the elements of the bijection... Need to list it to get the actual images out. 
 def gs(t): #Outputs the possible grid states for a tangle.
     state = []
-    for i in range(len(halves(t)[0])):
+    niv = halves(t)
+    for i in range(len(niv[0])):
         k = len(alpha_betas(t)[1]) - i
         while k >= 0:
-            for j in range(len(halves(t)[0][i])):
-                for h in range(len(halves(t)[1][k])):
-                    if set(image(halves(t)[0][i][j])).isdisjoint(domain(halves(t)[1][k][h])):
-                        print("yup",i,k,j,h,[halves(t)[0][i][j], halves(t)[1][k][h]])
-                        state.append([halves(t)[0][i][j], halves(t)[1][k][h]])
+            for j in range(len(niv[0][i])):
+                for h in range(len(niv[1][k])):
+                    if set(image(niv[0][i][j])).isdisjoint(domain(niv[1][k][h])):
+                        print("yup",i,k,j,h,[niv[0][i][j], niv[1][k][h]])
+                        state.append([niv[0][i][j], niv[1][k][h]])
+                    else:
+                        print("nope")
             k -=1
     return state
 
@@ -718,6 +723,8 @@ def gs(t): #Outputs the possible grid states for a tangle.
 #Given two bijections l and r (for the left and right grid states of a generator of CT(T) for a given elementary tangle), spits out the differential computed using Heegard diagrams 
 def grid_state_differential_heegard_generator(l,r):
     for i in range(len(all_bijections)):
+
+NOTE: When counting rectangles, make sure to use alpha_betas to see which circles there actually are. Heegard methods only give you the positions of the Xs and Os, not how big the squares are
 '''
 
 
@@ -730,7 +737,7 @@ for i in range(tangles):
     print(i)
     print(alpha_betas(i))
 
-print(halves(1))
+print()
 
 
 #print_heegard()
