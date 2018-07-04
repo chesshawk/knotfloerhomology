@@ -718,6 +718,110 @@ def gs(t): #Outputs the possible grid states for a tangle.
 
 
 
+def ralg_diff(b): #Reverse of algebra. Need to factor in the modular relationships, Same as del-. Introduces a crossing between two strands that do not have one and sums.
+    diff = []
+    for i in range(len(b)):
+        j = i + 1
+        while j < len(b):
+            d = []
+            for k in range(len(b)):
+                d.append(b[k])
+            if  not(bsc(b[i], b[j])):
+                num1 = (list(b[i])[0], list(b[j])[1])
+                num2 = (list(b[j])[0], list(b[i])[1])
+                d.remove(b[i])
+                d.append(num1)
+                d.remove(b[j])
+                d.append(num2)
+                diff.append(d)
+            j += 1
+        
+    return diff
+
+def switch(b,c): #Takes a grid state and reveses that shit like dm. Slide up into my dm's mwah. Edit this to take in a grid state hot and fresh from the method.
+    switch = []
+    for i in range(len(b)):
+        for j in range(len(c)):
+            d = []
+            e = []
+            for k in range(len(b)):
+                d.append(b[k])
+            for k in range(len(c)):
+                e.append(c[k])
+            num1 = (list(b[i])[0], list(c[j])[0])
+            num2 = (list(b[i])[1], list(c[j])[1])
+            d.remove(b[i])
+            d.append(num1)
+            e.remove(c[j])
+            e.append(num2)
+            switch.append([d,e])
+        j +=1
+    return switch
+
+def orange_on_black_mod(b,i,j,u):
+    for i in range(len(b)):
+        if bsc(b[i],b[j]):
+            k = int(min(list(b[i])[0], list(b[j])[0]) + 0.5)
+            while k < max(list(b[i])[0], list(b[j])[0]):
+                if (2*u)%2 == 0:
+                    for ass in range(int(min(list(b[i])[1], list(b[j])[1])), int(max(list(b[i])[1], list(b[j])[1]))):
+                        if _matrix[get_entry(int(u-1),k)][get_entry(int(u),ass)] != 0:
+                            return True
+                else:
+                    for ass in range(int(min(list(b[i])[1], list(b[j])[1])), int(max(list(b[i])[1], list(b[j])[1]))):
+                        if _matrix[get_entry(int(u-0.5),k)][get_entry(int(u+0.5),ass)] != 0:
+                            return True
+
+                k = k+1
+    return False
+
+
+
+def d_plus(b, u): #Takes a half of a grid state and gives d_plus. b is the bijection, u is the position of the bijections range (so that A3-->B3 has u=3.5)
+    diff = []
+    for i in range(len(b)):
+        j = i + 1
+        while j < len(b):
+            d = []
+            for k in range(len(b)):
+                d.append(b[k])
+            if  bsc(b[i], b[j]):
+                num1 = (list(b[i])[0], list(b[j])[1])
+                num2 = (list(b[j])[0], list(b[i])[1])
+                d.remove(b[i])
+                d.append(num1)
+                d.remove(b[j])
+                d.append(num2)
+                if not (alg_diff_modulo(b,i,j) or orange_on_black_mod(b,i,j,u)):     #NOTE: Double pointed homology will require modifying the modulo.
+                    diff.append(d)
+            j += 1
+    return diff
+
+
+def d_minus(b, u): #Takes a half of a grid state and gives d_plus. b is the bijection, u is the position of the bijections range (so that A3-->B3 has u=3.5)
+    diff = []
+    for i in range(len(b)):
+        j = i + 1
+        while j < len(b):
+            d = []
+            for k in range(len(b)):
+                d.append(b[k])
+            if  bsc(b[i], b[j]):
+                num1 = (list(b[i])[0], list(b[j])[1])
+                num2 = (list(b[j])[0], list(b[i])[1])
+                d.remove(b[i])
+                d.append(num1)
+                d.remove(b[j])
+                d.append(num2)
+                if not (alg_diff_modulo(b,i,j) or orange_on_black_mod(b,i,j,u)):     #NOTE: Double pointed homology will require modifying the modulo.
+                    diff.append(d)
+            j += 1
+    return diff
+
+
+
+
+    #TODO add modular requirements for orange black
 '''
 #Given two bijections l and r (for the left and right grid states of a generator of CT(T) for a given elementary tangle), spits out the differential computed using Heegard diagrams 
 def grid_state_differential_heegard_generator(l,r):
@@ -736,7 +840,7 @@ for i in range(tangles):
     print(i)
     print(alpha_betas(i))
 
-print()
+print(d_plus([(0.5,1.5),(0.5,1.5),(5.5,5.5)],3))
 
 
 
