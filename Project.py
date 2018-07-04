@@ -718,7 +718,6 @@ def gs(t): #Outputs the possible grid states for a tangle.
 
 
 
-
 '''
 #Given two bijections l and r (for the left and right grid states of a generator of CT(T) for a given elementary tangle), spits out the differential computed using Heegard diagrams 
 def grid_state_differential_heegard_generator(l,r):
@@ -738,6 +737,7 @@ for i in range(tangles):
     print(alpha_betas(i))
 
 print()
+
 
 
 #print_heegard()
