@@ -213,7 +213,8 @@ def alg_mult (a, b): #imput is two elements of all_bij a[number of elements][bij
         return 0
     else:
         for i in range(len(a)):
-            product.append((list(a[i])[0],list(b[i])[1]))
+            if not((list(a[i])[0],list(b[i])[1]) in product):
+                product.append((list(a[i])[0],list(b[i])[1]))
     return product            
 
 
@@ -224,7 +225,7 @@ def mul_sum(a,b):
     prod_sum = []
     for i in range(len(a)):
         for j in range(len(b)):
-            if alg_mult(a[i], b[j]) != 0:
+            if alg_mult(a[i], b[j]) != 0 and not(alg_mult(a[i],b[j]) in prod_sum):
                 prod_sum.append(alg_mult(a[i],b[j]))
     return prod_sum
 
@@ -330,8 +331,10 @@ def alg_diff(b): #Differential for a single element. Need to code in the modular
                 d.append(num1)
                 d.remove(b[j])
                 d.append(num2)
-                if not alg_diff_modulo(b,i,j):
+                if not alg_diff_modulo(b,i,j) and not(d in diff):
                     diff.append(d)
+                elif not alg_diff_modulo(b,i,j) and d in diff:
+                    diff.remove(d)
             j += 1
     return diff
 
@@ -733,12 +736,16 @@ def ralg_diff(b): #Reverse of algebra. Need to factor in the modular relationshi
                 d.append(num1)
                 d.remove(b[j])
                 d.append(num2)
-                diff.append(d)
+                if not(d in diff):
+                    diff.append(d)
+                elif d in diff:
+                    diff.remove(d)
             j += 1
         
     return diff
 
 def switch(b,c): #Takes a grid state and reveses that shit like dm. Slide up into my dm's mwah. Edit this to take in a grid state hot and fresh from the method.
+    #TODO figure out wat the hell this method is, then mod by F2.
     switch = []
     for i in range(len(b)):
         for j in range(len(c)):
@@ -777,7 +784,7 @@ def orange_on_black_mod(b,i,j,u):
 
 
 
-def d_plus(b, u): #Takes a half of a grid state and gives d_plus. b is the bijection, u is the position of the bijections range (so that A3-->B3 has u=3.5)
+def d_plus_half(b, u): #Takes a half of a grid state and gives d_plus. b is the bijection, u is the position of the bijections range (so that A3-->B3 has u=3.5)
     diff = []
     for i in range(len(b)):
         j = i + 1
@@ -792,13 +799,15 @@ def d_plus(b, u): #Takes a half of a grid state and gives d_plus. b is the bijec
                 d.append(num1)
                 d.remove(b[j])
                 d.append(num2)
-                if not (alg_diff_modulo(b,i,j) or orange_on_black_mod(b,i,j,u)):     #NOTE: Double pointed homology will require modifying the modulo.
+                if not (alg_diff_modulo(b,i,j) or orange_on_black_mod(b,i,j,u) or d in diff):     #NOTE: Double pointed homology will require modifying the modulo.
                     diff.append(d)
+                elif not (alg_diff_modulo(b,i,j) or orange_on_black_mod(b,i,j,u)) and d in diff:
+                    diff.remove(d)
             j += 1
     return diff
 
 
-def d_minus(b, u): #Takes a half of a grid state and gives d_plus. b is the bijection, u is the position of the bijections range (so that A3-->B3 has u=3.5)
+def d_minus_half(b, u): #Takes a half of a grid state and gives d_plus. b is the bijection, u is the position of the bijections range (so that A3-->B3 has u=3.5)
     diff = []
     for i in range(len(b)):
         j = i + 1
@@ -806,22 +815,68 @@ def d_minus(b, u): #Takes a half of a grid state and gives d_plus. b is the bije
             d = []
             for k in range(len(b)):
                 d.append(b[k])
-            if  bsc(b[i], b[j]):
+            if not(bsc(b[i], b[j])):
                 num1 = (list(b[i])[0], list(b[j])[1])
                 num2 = (list(b[j])[0], list(b[i])[1])
                 d.remove(b[i])
                 d.append(num1)
                 d.remove(b[j])
                 d.append(num2)
-                if not (alg_diff_modulo(b,i,j) or orange_on_black_mod(b,i,j,u)):     #NOTE: Double pointed homology will require modifying the modulo.
+                if not(alg_diff_modulo(b,i,j) or orange_on_black_mod(b,i,j,u) or d in diff):
                     diff.append(d)
+                elif not(alg_diff_modulo(b,i,j) or orange_on_black_mod(b,i,j,u)) and d in diff:
+                    diff.remove(d)
             j += 1
+        
     return diff
 
+def to_simple_strands(b): #Given a grid state returns it like simple strands ie [((0, -0.5), (0.5, 4.5))] maps to [(-0.5,4.5)]
+    left = []
+    for i in range(len(b)):
+        left.append((b[i][0][1], b[i][1][1]))
+    return left
+
+def from_simple_strands(b,u): #u is the rightmost position. Given [(-0.5,4.5),(0.5,0.5)], 0.5 recover [((0, -0.5), (0.5, 4.5)), ((0,0.5),(0.5,0.5))].
+    starbs = []
+    for i in range(len(b)):
+        starbs.append(((u-0.5,b[i][0]),(u,b[i][1])))
+    return starbs
+
+#FOR GENERATORS (I.e. GRID STATES, TWO HALVES)
+
+def d_plus_generator(b):   #Takes two halves. Grid state is inputted like [[((0, -0.5), (0.5, 4.5))], [((0.5, 0.5), (1, 0.5)), ((0.5, 5.5), (1, 4.5)), ((0.5, -0.5), (1, 3.5))]]
+    autre = []
+    arr = d_plus_half(to_simple_strands(b[1]),b[1][0][1][0])
+    for i in range(len(arr)):
+        if not([b[0],from_simple_strands(arr[i],b[1][0][1][0])] in autre):
+            autre.append([b[0],from_simple_strands(arr[i],b[1][0][1][0])]) 
+    return autre
+
+def d_minus_generator(b):  #Takes two halves. Grid state is inputted like [[((0, -0.5), (0.5, 4.5))], [((0.5, 0.5), (1, 0.5)), ((0.5, 5.5), (1, 4.5)), ((0.5, -0.5), (1, 3.5))]]
+#Output is array of two-halves.
+    autre = []
+    arr = d_minus_half(to_simple_strands(b[0]),b[1][0][0][0])
+    for i in range(len(arr)):
+        if not([from_simple_strands(arr[i],b[1][0][0][0]), b[1]] in autre):
+            autre.append([from_simple_strands(arr[i],b[1][0][0][0]), b[1]]) 
+    return autre
 
 
-
+def d_m_generator(b): #Takes two halves. Grid state is inputted like [[((0, -0.5), (0.5, 4.5))], [((0.5, 0.5), (1, 0.5)), ((0.5, 5.5), (1, 4.5)), ((0.5, -0.5), (1, 3.5))]]
+    left = to_simple_strands(b[0])
+    right = to_simple_strands(b[1])
+    #Now left and right are arrays of grid states
+    left = d_plus_half(left,t-0.5)
+    right = d_minus_half(right,t)
     #TODO add modular requirements for orange black
+
+
+def d_plus(listoftwohalves): #Takes a list of two-halves
+    for i in range(len(listoftwohalves)):
+        print("ugeriug")
+        #TODO
+
+
 '''
 #Given two bijections l and r (for the left and right grid states of a generator of CT(T) for a given elementary tangle), spits out the differential computed using Heegard diagrams 
 def grid_state_differential_heegard_generator(l,r):
@@ -835,12 +890,19 @@ NOTE: When counting rectangles, make sure to use alpha_betas to see which circle
 print("caps",caps)
 print("tangles",tangles)
 print("boundary points",boundary_points)
-
+'''
 for i in range(tangles):
     print(i)
     print(alpha_betas(i))
+'''
+#print(gs(1)) #[[((0, -0.5), (0.5, 4.5)), ((0,0.5),(0.5, 0.5))], [((0.5, 5.5), (1, 4.5)), ((0.5, -0.5), (1, 3.5))]]
 
-print(d_plus([(0.5,1.5),(0.5,1.5),(5.5,5.5)],3))
+
+print(d_minus_half([(-0.5,5.5),(0.5,1.5),(1.5,2.5)],2.5))
+
+print(d_minus_generator( [from_simple_strands([(-0.5,5.5),(0.5,1.5),(1.5,2.5)],2.5), [((2.5, -0.5), (3, 4.5)), ((2.5, -0.5), (3, 3.5)), ((2.5, 0.5), (3, 4.5)), ((2.5, 3.5), (3, 5.5)), ((2.5, 4.5), (3, -0.5))]] ))
+
+
 
 
 
