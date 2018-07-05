@@ -202,12 +202,22 @@ def asc(a,b):
                 l = domain(b).index(a[i][1])
                 if b[l][0] < b[l][1]:
                     return True
-    
-def f2in(elem, asshole):
+
+def f2in_permutation_finder(elem, asshole):
     for i in range(len(list(itertools.permutations(elem)))):
-        if i in asshole:
-            return True
-    return False
+        if list(list(itertools.permutations(elem))[i]) in asshole:
+            return [i,list(list(itertools.permutations(elem))[i])]
+    return [-1,"nope not in here"]
+
+
+def f2in_numarasi(elem, asshole):
+    return f2in_permutation_finder(elem, asshole)[0]
+
+def f2in(elem, asshole):
+    if f2in_numarasi(elem, asshole) == -1:
+        return False
+    else:
+        return True
 
 
 def alg_mult (a, b): #imput is two elements of all_bij a[number of elements][bijection]
@@ -223,7 +233,7 @@ def alg_mult (a, b): #imput is two elements of all_bij a[number of elements][bij
             if not( f2in((list(a[i])[0],list(b[i])[1]), product) ):
                 product.append((list(a[i])[0],list(b[i])[1]))
             else:
-                product.remove((list(a[i])[0],list(b[i])[1]))
+                product.remove(f2in_permutation_finder((list(a[i])[0],list(b[i])[1]), product)[1])
     return product            
 
 
@@ -234,11 +244,12 @@ def mul_sum(a,b):
     prod_sum = []
     for i in range(len(a)):
         for j in range(len(b)):
-            if alg_mult(a[i], b[j]) != 0 and not(alg_mult(a[i],b[j]) in prod_sum):
+            if alg_mult(a[i], b[j]) != 0 and not(f2in(alg_mult(a[i],b[j]) , prod_sum)):
                 prod_sum.append(alg_mult(a[i],b[j]))
-            elif alg_mult(a[i], b[j]) != 0 and alg_mult(a[i],b[j]) in prod_sum:
-                prod_sum.remove(alg_mult(a[i],b[j]))                
+            elif alg_mult(a[i], b[j]) != 0 and f2in(alg_mult(a[i],b[j]) , prod_sum):
+                prod_sum.remove(f2in_permutation_finder(alg_mult(a[i],b[j]) , prod_sum)[1])                
     return prod_sum
+
 
 """
 What needs to be done is to continue to work with the alg_mult method in order to take into account the modular relationships as discussed.
@@ -271,8 +282,7 @@ def grid_state(b):
 #b is any bijection. Returns an array of all the possible bijections that it can be next to in a grid state
 
 #gets the sign sequence at the left edge of tangle i
-#if you give me some stupid shit with no crossings I WILL BE ANGRY
-#This is still slow as balls but I'm trying
+#if you give me some stupid shitty knot with no crossings I WILL BE ANGRY
 
 def sign_sequence(i):
     signs = [0] * boundary_points
@@ -310,7 +320,7 @@ def allowable_grid_state(b):
 
     return grid_state
 
-def alg_diff_modulo(b,i,j):
+def alg_diff_generator_modulo(b,i,j):
     c = domain(b)
     if b[i][0] < b[j][0] and b[i][1] > b[j][1]:
         for k in range(int(b[i][0]+0.5),int(b[j][0]-0.5)):
@@ -327,7 +337,7 @@ def alg_diff_modulo(b,i,j):
                 if b[i][1] < b[l][1] < b[j][1]:
                     return True
 
-def alg_diff(b): #Differential for a single element. Need to code in the modular relations. 
+def alg_diff_generator(b): #Differential for a single element. Need to code in the modular relations. 
     diff = []
     for i in range(len(b)):
         j = i + 1
@@ -342,13 +352,24 @@ def alg_diff(b): #Differential for a single element. Need to code in the modular
                 d.append(num1)
                 d.remove(b[j])
                 d.append(num2)
-                if not alg_diff_modulo(b,i,j) and not(d in diff):
+                if not alg_diff_generator_modulo(b,i,j) and not f2in(d , diff):
                     diff.append(d)
-                elif not alg_diff_modulo(b,i,j) and d in diff:
-                    diff.remove(d)
+                elif not alg_diff_generator_modulo(b,i,j) and f2in(d , diff):
+                    diff.remove(f2in_permutation_finder(d,diff)[1])
             j += 1
     return diff
 
+
+def alg_diff(b): #For a linear combination of algebra basis elements.
+    diff = []
+    for i in range(len(b)):
+        war = alg_diff_generator(b[i])
+        for j in range(len(war)):
+            if not f2in(war[j], diff):
+                diff.append(war[j])
+            else:
+                diff.remove(f2in_permutation_finder(war[j], diff)[1])
+    return diff
 
 
 def gradings_alg(b, c): #Takes a bijection and a tangle. And returns an ordered pair of the maslov and alexander gradings.
@@ -732,7 +753,7 @@ def gs(t): #Outputs the possible grid states for a tangle.
 
 
 
-def ralg_diff(b): #Reverse of algebra. Need to factor in the modular relationships, Same as del-. Introduces a crossing between two strands that do not have one and sums.
+def ralg_diff_generator(b): #Reverse of algebra. Need to factor in the modular relationships, Same as del-. Introduces a crossing between two strands that do not have one and sums.
     diff = []
     for i in range(len(b)):
         j = i + 1
@@ -747,10 +768,10 @@ def ralg_diff(b): #Reverse of algebra. Need to factor in the modular relationshi
                 d.append(num1)
                 d.remove(b[j])
                 d.append(num2)
-                if not(d in diff):
+                if not(f2in(d , diff)):
                     diff.append(d)
-                elif d in diff:
-                    diff.remove(d)
+                elif f2in(d,diff):
+                    diff.remove(f2in_permutation_finder(d,diff)[1])
             j += 1
         
     return diff
@@ -810,10 +831,10 @@ def d_plus_half(b, u): #Takes a half of a grid state and gives d_plus. b is the 
                 d.append(num1)
                 d.remove(b[j])
                 d.append(num2)
-                if not (alg_diff_modulo(b,i,j) or orange_on_black_mod(b,i,j,u) or d in diff):     #NOTE: Double pointed homology will require modifying the modulo.
+                if not (alg_diff_generator_modulo(b,i,j) or orange_on_black_mod(b,i,j,u) or f2in(d , diff)):     #NOTE: Double pointed homology will require modifying the modulo.
                     diff.append(d)
-                elif not (alg_diff_modulo(b,i,j) or orange_on_black_mod(b,i,j,u)) and d in diff:
-                    diff.remove(d)
+                elif not (alg_diff_generator_modulo(b,i,j) or orange_on_black_mod(b,i,j,u)) and f2in(d , diff):
+                    diff.remove(f2in_permutation_finder(d,diff)[1])
             j += 1
     return diff
 
@@ -833,10 +854,10 @@ def d_minus_half(b, u): #Takes a half of a grid state and gives d_plus. b is the
                 d.append(num1)
                 d.remove(b[j])
                 d.append(num2)
-                if not(alg_diff_modulo(b,i,j) or orange_on_black_mod(b,i,j,u) or d in diff):
+                if not(alg_diff_generator_modulo(b,i,j) or orange_on_black_mod(b,i,j,u) or f2in(d , diff)):
                     diff.append(d)
-                elif not(alg_diff_modulo(b,i,j) or orange_on_black_mod(b,i,j,u)) and d in diff:
-                    diff.remove(d)
+                elif not(alg_diff_generator_modulo(b,i,j) or orange_on_black_mod(b,i,j,u)) and f2in(d , diff):
+                    diff.remove(f2in_permutation_finder(d , diff)[1])
             j += 1
         
     return diff
@@ -859,8 +880,10 @@ def d_plus_generator(b):   #Takes two halves. Grid state is inputted like [[((0,
     autre = []
     arr = d_plus_half(to_simple_strands(b[1]),b[1][0][1][0])
     for i in range(len(arr)):
-        if not([b[0],from_simple_strands(arr[i],b[1][0][1][0])] in autre):
+        if not(f2in([b[0],from_simple_strands(arr[i],b[1][0][1][0])] , autre)):
             autre.append([b[0],from_simple_strands(arr[i],b[1][0][1][0])]) 
+        else:
+            autre.remove(f2in_permutation_finder([b[0],from_simple_strands(arr[i],b[1][0][1][0])] , autre)[1])
     return autre
 
 def d_minus_generator(b):  #Takes two halves. Grid state is inputted like [[((0, -0.5), (0.5, 4.5))], [((0.5, 0.5), (1, 0.5)), ((0.5, 5.5), (1, 4.5)), ((0.5, -0.5), (1, 3.5))]]
@@ -868,8 +891,10 @@ def d_minus_generator(b):  #Takes two halves. Grid state is inputted like [[((0,
     autre = []
     arr = d_minus_half(to_simple_strands(b[0]),b[1][0][0][0])
     for i in range(len(arr)):
-        if not([from_simple_strands(arr[i],b[1][0][0][0]), b[1]] in autre):
+        if not(f2in([from_simple_strands(arr[i],b[1][0][0][0]), b[1]] , autre)):
             autre.append([from_simple_strands(arr[i],b[1][0][0][0]), b[1]]) 
+        elif f2in([from_simple_strands(arr[i],b[1][0][0][0]), b[1]] , autre):
+            autre.remove(f2in_permutation_finder([from_simple_strands(arr[i],b[1][0][0][0]), b[1]] , autre)[1]) 
     return autre
 
 
@@ -879,6 +904,7 @@ def d_m_generator(b): #Takes two halves. Grid state is inputted like [[((0, -0.5
     #Now left and right are arrays of grid states
     left = d_plus_half(left,t-0.5)
     right = d_minus_half(right,t)
+    #TODO add rest of the terms
     #TODO add modular requirements for orange black
 
 
@@ -886,6 +912,11 @@ def d_plus(listoftwohalves): #Takes a list of two-halves
     for i in range(len(listoftwohalves)):
         print("ugeriug")
         #TODO
+
+#TODO d_minus
+
+
+#TODO d_m
 
 
 '''
@@ -907,7 +938,7 @@ for i in range(tangles):
 
 print("diff 1")
 
-dile = alg_diff([(-0.5,3.5), (1.5,1.5), (2.5, -0.5)])
+dile = alg_diff_generator([(-0.5,3.5), (1.5,1.5), (2.5, -0.5)])
 
 print(dile)
 
@@ -916,13 +947,14 @@ print("diff twice")
 
 
 for i in range(len(dile)):
-    war = alg_diff(dile[i])
-    print(war)
-    print("fuck")
-    print(list(itertools.permutations([(1.5, -0.5), (-0.5, 1.5), (2.5, 3.5)])))
-    print(f2in([(1.5, -0.5), (-0.5, 1.5), (2.5, 3.5)], war))
+    print(alg_diff_generator(dile[i]))
 
+print(f2in([(-0.5, -0.5), (2.5, 1.5), (1.5, 3.5)], alg_diff_generator(dile[0])))
 #print_heegard()
+
+print("-=----------------")
+
+print(alg_diff(alg_diff([[(5.5,5.5)]])))
 
 
 
