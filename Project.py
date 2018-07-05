@@ -203,6 +203,13 @@ def asc(a,b):
                 if b[l][0] < b[l][1]:
                     return True
     
+def f2in(elem, asshole):
+    for i in range(len(list(itertools.permutations(elem)))):
+        if i in asshole:
+            return True
+    return False
+
+
 def alg_mult (a, b): #imput is two elements of all_bij a[number of elements][bijection]
     product = []
     if image(a) != domain(b):
@@ -213,7 +220,7 @@ def alg_mult (a, b): #imput is two elements of all_bij a[number of elements][bij
         return 0
     else:
         for i in range(len(a)):
-            if not((list(a[i])[0],list(b[i])[1]) in product):
+            if not( f2in((list(a[i])[0],list(b[i])[1]), product) ):
                 product.append((list(a[i])[0],list(b[i])[1]))
             else:
                 product.remove((list(a[i])[0],list(b[i])[1]))
@@ -891,9 +898,6 @@ NOTE: When counting rectangles, make sure to use alpha_betas to see which circle
 
 
 
-print("caps",caps)
-print("tangles",tangles)
-print("boundary points",boundary_points)
 '''
 for i in range(tangles):
     print(i)
@@ -901,17 +905,24 @@ for i in range(tangles):
 '''
 #print(gs(1)) #[[((0, -0.5), (0.5, 4.5)), ((0,0.5),(0.5, 0.5))], [((0.5, 5.5), (1, 4.5)), ((0.5, -0.5), (1, 3.5))]]
 
+print("diff 1")
 
-print(d_minus_half([(-0.5,5.5),(0.5,1.5),(1.5,2.5)],2.5))
+dile = alg_diff([(-0.5,3.5), (1.5,1.5), (2.5, -0.5)])
 
-print(d_minus_generator( [from_simple_strands([(-0.5,5.5),(0.5,1.5),(1.5,2.5)],2.5), [((2.5, -0.5), (3, 4.5)), ((2.5, -0.5), (3, 3.5)), ((2.5, 0.5), (3, 4.5)), ((2.5, 3.5), (3, 5.5)), ((2.5, 4.5), (3, -0.5))]] ))
+print(dile)
+
+print("diff twice")
 
 
 
-
+for i in range(len(dile)):
+    war = alg_diff(dile[i])
+    print(war)
+    print("fuck")
+    print(list(itertools.permutations([(1.5, -0.5), (-0.5, 1.5), (2.5, 3.5)])))
+    print(f2in([(1.5, -0.5), (-0.5, 1.5), (2.5, 3.5)], war))
 
 #print_heegard()
-
 
 
 
