@@ -215,6 +215,8 @@ def alg_mult (a, b): #imput is two elements of all_bij a[number of elements][bij
         for i in range(len(a)):
             if not((list(a[i])[0],list(b[i])[1]) in product):
                 product.append((list(a[i])[0],list(b[i])[1]))
+            else:
+                product.remove((list(a[i])[0],list(b[i])[1]))
     return product            
 
 
@@ -227,6 +229,8 @@ def mul_sum(a,b):
         for j in range(len(b)):
             if alg_mult(a[i], b[j]) != 0 and not(alg_mult(a[i],b[j]) in prod_sum):
                 prod_sum.append(alg_mult(a[i],b[j]))
+            elif alg_mult(a[i], b[j]) != 0 and alg_mult(a[i],b[j]) in prod_sum:
+                prod_sum.remove(alg_mult(a[i],b[j]))                
     return prod_sum
 
 """
