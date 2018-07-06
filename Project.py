@@ -555,7 +555,7 @@ def alpha_betas(t): # takes a strand and gives the coordinates of the alpha and 
                 mid_coords.append((t-1.5,-0.5 + i)) 
                 mid_coords.append((t-1.5, boundary_points - 0.5 - i))
                 right_coords.append((t-1,-0.5 + i))
-                right_coords.append((t-1, boundary_points - 0.5 - i))
+                right_coords.append((t-1, boundary_points hw- 0.5 - i))
         right_coords.append((t-1, (boundary_points-1)/2))
         return [left_coords, mid_coords, right_coords]
     elif t >= tangles - caps:
@@ -592,46 +592,46 @@ def left_heegard(i):
     for ass in range(boundary_points):
         left[ass] = [""] * boundary_points
 
-    for fuck in range(boundary_points):
+    for hewler in range(boundary_points):
         if i == tangles-2:
-            if ss[fuck] == -1:
+            if ss[hewler] == -1:
                 cappair = -1
                 for k in range(boundary_points):
-                    if _matrix[get_entry(i, fuck)][get_entry(i,k)] != 0:
+                    if _matrix[get_entry(i, hewler)][get_entry(i,k)] != 0:
                         cappair = k
-                left[fuck][min(cappair,fuck)] = "O"
-            elif ss[fuck] == 1:
+                left[hewler][min(cappair,hewler)] = "O"
+            elif ss[hewler] == 1:
                 cappair = -1
                 for k in range(boundary_points):
-                    if _matrix[get_entry(i, fuck)][get_entry(i,k)] != 0:
+                    if _matrix[get_entry(i, hewler)][get_entry(i,k)] != 0:
                         cappair = k
-                left[fuck][min(cappair,fuck)] = "X"
+                left[hewler][min(cappair,hewler)] = "X"
         else:
-            if sign_sequence(i+1)[fuck] == 0 and ss[fuck] == -1:
+            if sign_sequence(i+1)[hewler] == 0 and ss[hewler] == -1:
                 cappair = -1
                 for k in range(boundary_points):
-                    if _matrix[get_entry(i, fuck)][get_entry(i,k)] != 0:
+                    if _matrix[get_entry(i, hewler)][get_entry(i,k)] != 0:
                         cappair = k
-                left[fuck][min(cappair,fuck)] = "O"
-            elif sign_sequence(i+1)[fuck] == 0 and ss[fuck] == 1:
+                left[hewler][min(cappair,hewler)] = "O"
+            elif sign_sequence(i+1)[hewler] == 0 and ss[hewler] == 1:
                 cappair = -1
                 for k in range(boundary_points):
-                    if _matrix[get_entry(i, fuck)][get_entry(i,k)] != 0:
+                    if _matrix[get_entry(i, hewler)][get_entry(i,k)] != 0:
                         cappair = k
-                left[fuck][min(cappair,fuck)] = "X"
+                left[hewler][min(cappair,hewler)] = "X"
 
-            elif ss[fuck] == 1 and abs(crosspoint - fuck) > 0.5:
-                left[fuck][fuck] = "X"
-            elif ss[fuck] == -1 and abs(crosspoint - fuck) > 0.5:
-                left[fuck][fuck] = "O"
-            elif ss[fuck] == 1 and crosspoint - fuck == 0.5:
-                left[fuck][fuck+1] = "X"
-            elif ss[fuck] == -1 and crosspoint - fuck == 0.5:
-                left[fuck][fuck+1] = "O"
-            elif ss[fuck] == 1 and crosspoint - fuck == -0.5:
-                left[fuck][fuck-1] = "X"
-            elif ss[fuck] == -1 and crosspoint - fuck == -0.5:
-                left[fuck][fuck-1] = "O"
+            elif ss[hewler] == 1 and abs(crosspoint - hewler) > 0.5:
+                left[hewler][hewler] = "X"
+            elif ss[hewler] == -1 and abs(crosspoint - hewler) > 0.5:
+                left[hewler][hewler] = "O"
+            elif ss[hewler] == 1 and crosspoint - hewler == 0.5:
+                left[hewler][hewler+1] = "X"
+            elif ss[hewler] == -1 and crosspoint - hewler == 0.5:
+                left[hewler][hewler+1] = "O"
+            elif ss[hewler] == 1 and crosspoint - hewler == -0.5:
+                left[hewler][hewler-1] = "X"
+            elif ss[hewler] == -1 and crosspoint - hewler == -0.5:
+                left[hewler][hewler-1] = "O"
                 
 
 
@@ -661,48 +661,48 @@ def right_heegard(i):
     for ass in range(boundary_points):
         left[ass] = [""] * boundary_points
 
-    for fuck in range(boundary_points):
+    for hewler in range(boundary_points):
         if i != 0:
-            if sign_sequence(i-1)[fuck] == 0 and ss[fuck] == -1:
+            if sign_sequence(i-1)[hewler] == 0 and ss[hewler] == -1:
                 cappair = -1
                 for k in range(boundary_points):
                     #print("k=",k)
-                    if _matrix[get_entry(i, fuck)][get_entry(i,k)] != 0:
+                    if _matrix[get_entry(i, hewler)][get_entry(i,k)] != 0:
                         cappair = k
-                left[fuck][min(cappair,fuck)] = "X"
-            elif sign_sequence(i-1)[fuck] == 0 and ss[fuck] == 1:
+                left[hewler][min(cappair,hewler)] = "X"
+            elif sign_sequence(i-1)[hewler] == 0 and ss[hewler] == 1:
                 cappair = -1
                 for k in range(boundary_points):
-                    if _matrix[get_entry(i, fuck)][get_entry(i,k)] != 0:
+                    if _matrix[get_entry(i, hewler)][get_entry(i,k)] != 0:
                         cappair = k
-                left[fuck][min(cappair,fuck)] = "O"
+                left[hewler][min(cappair,hewler)] = "O"
 
-            elif ss[fuck] == 1 and abs(crosspoint - fuck) > 0.5:
-                left[fuck][fuck] = "O"
-            elif ss[fuck] == -1 and abs(crosspoint - fuck) > 0.5:
-                left[fuck][fuck] = "X"
-            elif ss[fuck] == 1 and crosspoint - fuck == 0.5:
-                left[fuck][fuck+1] = "O"
-            elif ss[fuck] == -1 and crosspoint - fuck == 0.5:
-                left[fuck][fuck+1] = "X"
-            elif ss[fuck] == 1 and crosspoint - fuck == -0.5:
-                left[fuck][fuck-1] = "O"
-            elif ss[fuck] == -1 and crosspoint - fuck == -0.5:
-                left[fuck][fuck-1] = "X"
+            elif ss[hewler] == 1 and abs(crosspoint - hewler) > 0.5:
+                left[hewler][hewler] = "O"
+            elif ss[hewler] == -1 and abs(crosspoint - hewler) > 0.5:
+                left[hewler][hewler] = "X"
+            elif ss[hewler] == 1 and crosspoint - hewler == 0.5:
+                left[hewler][hewler+1] = "O"
+            elif ss[hewler] == -1 and crosspoint - hewler == 0.5:
+                left[hewler][hewler+1] = "X"
+            elif ss[hewler] == 1 and crosspoint - hewler == -0.5:
+                left[hewler][hewler-1] = "O"
+            elif ss[hewler] == -1 and crosspoint - hewler == -0.5:
+                left[hewler][hewler-1] = "X"
         else:
-            if ss[fuck] == -1:
+            if ss[hewler] == -1:
                 cappair = -1
                 for k in range(boundary_points):
                     #print("k=",k)
-                    if _matrix[get_entry(i, fuck)][get_entry(i,k)] != 0:
+                    if _matrix[get_entry(i, hewler)][get_entry(i,k)] != 0:
                         cappair = k
-                left[fuck][min(cappair,fuck)] = "X"
-            elif ss[fuck] == 1:
+                left[hewler][min(cappair,hewler)] = "X"
+            elif ss[hewler] == 1:
                 cappair = -1
                 for k in range(boundary_points):
-                    if _matrix[get_entry(i, fuck)][get_entry(i,k)] != 0:
+                    if _matrix[get_entry(i, hewler)][get_entry(i,k)] != 0:
                         cappair = k
-                left[fuck][min(cappair,fuck)] = "O"
+                left[hewler][min(cappair,hewler)] = "O"
 
     return left
 
@@ -954,7 +954,7 @@ print(f2in([(-0.5, -0.5), (2.5, 1.5), (1.5, 3.5)], alg_diff_generator(dile[0])))
 
 print("-=----------------")
 
-print(alg_diff(alg_diff([[(5.5,5.5),(3.5,-0.5),(-0.5,0.5)],[(-0.5,-0.5),(2.5,1.5)]])))
+print(alg_diff(alg_diff([[(5.5,4.5),(3.5,-0.5),(-0.5,0.5)],[(-0.5,-0.5),(2.5,1.5)]])))
 
 
 
