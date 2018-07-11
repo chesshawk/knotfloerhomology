@@ -29,7 +29,7 @@ crossing_tangles = len(sequence) #number of tangles with a cross
 caps = get_max(sequence) + 1
 
 coordinates = []
-def make_grid(list):
+def make_grid(list): 
     for i in range(tangles-1):
         for j in range(boundary_points):
             list.append((i,j))
@@ -196,7 +196,7 @@ def dbsc(a,b): #Tells if there is a double crossing between two bijections. Inpu
                 for l in range(len(b)):
                     if bsc(a[i], a[j]) and bsc(b[k], b[l]) and a[i][1] == b[k][0] and a[j][1] == b[l][0]:
                         return True
-def asc(a,b):
+def asc(a,b): 
     for i in range(len(a)):
         if a[i][0] < a[i][1]:
             if a[i][1] in domain(b):
@@ -209,14 +209,14 @@ def asc(a,b):
                 if b[l][0] < b[l][1]:
                     return True
 
-def f2in_permutation_finder(elem, asshole):
+def f2in_permutation_finder(elem, asshole): #This method searches for if any permutation of the list elem is in the list of lists asshole. If it is, the program returns which permutation of elem is in asshole by returning the index of this permutation in itertools.permutations(elem), along with the permutation of elem itself.
     for i in range(len(list(itertools.permutations(elem)))):
         if list(list(itertools.permutations(elem))[i]) in asshole:
             return [i,list(list(itertools.permutations(elem))[i])]
     return [-1,"nope not in here"]
 
 
-def f2in_numarasi(elem, asshole):
+def f2in_numarasi(elem, asshole): #This method returns just the index from f2in_permutation_finder. 
     return f2in_permutation_finder(elem, asshole)[0]
 
 def f2in(elem, asshole):
@@ -786,21 +786,21 @@ def switch(b,c): #Takes a grid state and reveses that shit like dm. Slide up int
         j +=1
     return switch
 
-def orange_on_black_mod(b,i,j,u):
-    for i in range(len(b)):
-        if bsc(b[i],b[j]):
-            k = int(min(list(b[i])[0], list(b[j])[0]) + 0.5)
-            while k < max(list(b[i])[0], list(b[j])[0]):
-                if (2*u)%2 == 0:
-                    for ass in range(int(min(list(b[i])[1], list(b[j])[1])), int(max(list(b[i])[1], list(b[j])[1]))):
-                        if _matrix[get_entry(int(u-1),k)][get_entry(int(u),ass)] != 0:
-                            return True
-                else:
-                    for ass in range(int(min(list(b[i])[1], list(b[j])[1])), int(max(list(b[i])[1], list(b[j])[1]))):
-                        if _matrix[get_entry(int(u-0.5),k)][get_entry(int(u+0.5),ass)] != 0:
-                            return True
+def orange_on_black_mod(b,i,j,u): #Returns true if the ith and jth strands of bijection b at position u (i.e. strands go from u-0.5 to u) both cross each other as well as an orange strand.
+    #for i in range(len(b)):
+    if bsc(b[i],b[j]):
+        k = int(min(list(b[i])[0], list(b[j])[0]) + 0.5)
+        while k < max(list(b[i])[0], list(b[j])[0]):
+            if (2*u)%2 == 0:
+                for ass in range(int(min(list(b[i])[1], list(b[j])[1])), int(max(list(b[i])[1], list(b[j])[1]))):
+                    if _matrix[get_entry(int(u-1),k)][get_entry(int(u),ass)] != 0:
+                        return True
+            else:
+                for ass in range(int(min(list(b[i])[1], list(b[j])[1])), int(max(list(b[i])[1], list(b[j])[1]))):
+                    if _matrix[get_entry(int(u-0.5),k)][get_entry(int(u+0.5),ass)] != 0:
+                        return True
 
-                k = k+1
+            k = k+1
     return False
 
 
@@ -827,11 +827,21 @@ def d_plus_half(b, u): #Takes a half of a grid state and gives d_plus. b is the 
             j += 1
     return diff
 
-def alg_diff_generator_modulo_stupid_plus(b,i,j):
+def alg_diff_generator_modulo_stupid_plus(b,i,j,u): 
     bool = False
     arr = []
+
+    if (2*u)%2 == 1:
+        u = u + 0.5
+
     for l in range(min(b[i][1], b[j][1]),max(b[i][1], b[j][1])):
         arr.append(l)
+        if _matrix[get_entry(u,l)][get_entry(u-1,l)] != 0:
+            bool = True
+        for m in range(boundary_points):
+
+
+
     for k in range(len(b)):
         if b[i][1] < b[k][1] < b[j][1] and (b[k][0] > max(b[j][0],b[i][0]) or  b[k][0] < min(b[j][0],b[i][0])):
             bool = True
@@ -840,6 +850,7 @@ def alg_diff_generator_modulo_stupid_plus(b,i,j):
     if len(arr) > 0:
         bool = True
 
+
     #TODO finish making the mod relations, so that orange strands as well 
 
     if bool:
@@ -847,7 +858,7 @@ def alg_diff_generator_modulo_stupid_plus(b,i,j):
     else:
         return alg_diff_generator_modulo(b,i,j)
 
-def alg_diff_generator_modulo_stupid_minus(b,i,j):
+def alg_diff_generator_modulo_stupid_minus(b,i,j,u):
     bool = False
     arr = []
     for l in range(min(b[i][0], b[j][0]),max(b[i][0], b[j][0])):
@@ -884,9 +895,9 @@ def d_plus_half_stupid(b,u):
                 d.append(num1)
                 d.remove(b[j])
                 d.append(num2)
-                if not (alg_diff_generator_modulo_stupid_plus(b,i,j) or orange_on_black_mod(b,i,j,u) or f2in(d , diff)):     #NOTE: Double pointed homology will require modifying the modulo.
+                if not (alg_diff_generator_modulo_stupid_plus(b,i,j,u) or orange_on_black_mod(b,i,j,u) or f2in(d , diff)):     #NOTE: Double pointed homology will require modifying the modulo.
                     diff.append(d)
-                elif not (alg_diff_generator_modulo_stupid_plus(b,i,j) or orange_on_black_mod(b,i,j,u)) and f2in(d , diff):
+                elif not (alg_diff_generator_modulo_stupid_plus(b,i,j,u) or orange_on_black_mod(b,i,j,u)) and f2in(d , diff):
                     diff.remove(f2in_permutation_finder(d,diff)[1])
             j += 1
     return diff
@@ -909,9 +920,9 @@ def d_minus_half(b, u): #Takes a half of a grid state and gives d_minus. b is th
                 d.append(num1)
                 d.remove(b[j])
                 d.append(num2)
-                if not(alg_diff_generator_modulo_stupid_minus(b,i,j) or orange_on_black_mod(b,i,j,u) or f2in(d , diff)):
+                if not(alg_diff_generator_modulo_stupid_minus(b,i,j,u) or orange_on_black_mod(b,i,j,u) or f2in(d , diff)):
                     diff.append(d)
-                elif not(alg_diff_generator_modulo_stupid_minus(b,i,j) or orange_on_black_mod(b,i,j,u)) and f2in(d , diff):
+                elif not(alg_diff_generator_modulo_stupid_minus(b,i,j,u) or orange_on_black_mod(b,i,j,u)) and f2in(d , diff):
                     diff.remove(f2in_permutation_finder(d , diff)[1])
             j += 1
         
