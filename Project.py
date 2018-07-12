@@ -967,21 +967,26 @@ def d_plus_generator(b):   #Takes two halves. Grid state is inputted like [[((0,
     autre = []
     arr = d_plus_half(to_simple_strands(b[1]),b[1][0][1][0])
     for i in range(len(arr)):
-        if not(f2in([b[0],from_simple_strands(arr[i],b[1][0][1][0])] , autre)):
-            autre.append([b[0],from_simple_strands(arr[i],b[1][0][1][0])]) 
+        if not(f2in(from_simple_strands(arr[i],b[1][0][1][0]) , autre)):
+            autre.append(from_simple_strands(arr[i],b[1][0][1][0])) 
         else:
-            autre.remove(f2in_permutation_finder([b[0],from_simple_strands(arr[i],b[1][0][1][0])] , autre)[1])
+            autre.remove(f2in_permutation_finder(from_simple_strands(arr[i],b[1][0][1][0]) , autre)[1])
+    for j in range(len(autre)):
+        autre[j] = [b[0],autre[j]]
     return autre
+
 
 def d_minus_generator(b):  #Takes two halves. Grid state is inputted like [[((0, -0.5), (0.5, 4.5))], [((0.5, 0.5), (1, 0.5)), ((0.5, 5.5), (1, 4.5)), ((0.5, -0.5), (1, 3.5))]]
 #Output is array of two-halves.
     autre = []
     arr = d_minus_half(to_simple_strands(b[0]),b[1][0][0][0])
     for i in range(len(arr)):
-        if not(f2in([from_simple_strands(arr[i],b[1][0][0][0]), b[1]] , autre)):
+        if not(f2in(from_simple_strands(arr[i],b[1][0][0][0]) , autre)):
             autre.append([from_simple_strands(arr[i],b[1][0][0][0]), b[1]]) 
-        elif f2in([from_simple_strands(arr[i],b[1][0][0][0]), b[1]] , autre):
-            autre.remove(f2in_permutation_finder([from_simple_strands(arr[i],b[1][0][0][0]), b[1]] , autre)[1]) 
+        elif f2in(from_simple_strands(arr[i],b[1][0][0][0]) , autre):
+            autre.remove(f2in_permutation_finder(from_simple_strands(arr[i],b[1][0][0][0]) , autre)[1]) 
+    for j in range(len(autre)):
+        autre[j] = [autre[j],b[1]]
     return autre
 
 def d_m_modulo(left,right,i,j,u):
@@ -1000,7 +1005,7 @@ def d_m_modulo(left,right,i,j,u):
         while l < boundary_points:
             m = l - 1
             while m < l+2 and m > left[i][0]: 
-                if(_matrix[get_entry(u,l)][get_entry(u-1,m)]) != 0:
+                if(_matrix[int(get_entry(u,l))][int(get_entry(u-1,m))]) != 0:
                     return True
                 m += 1
             l += 1
@@ -1010,7 +1015,7 @@ def d_m_modulo(left,right,i,j,u):
         while l < boundary_points:
             m = l - 1 
             while m < l+2 and m < right[j][0]: 
-                if(_matrix[get_entry(u,l)][get_entry(u-1,m)]) != 0:
+                if(_matrix[int(get_entry(u,l))][int(get_entry(u-1,m))]) != 0:
                     return True
                 m += 1
             l += 1
@@ -1029,7 +1034,7 @@ def d_m_modulo(left,right,i,j,u):
         while l > -1:
             m = l + 1
             while m > l-2 and m < left[i][0]: 
-                if(_matrix[get_entry(u,l)][get_entry(u-1,m)]) != 0:
+                if(_matrix[int(get_entry(u,l))][int(get_entry(u-1,m))]) != 0:
                     return True
                 m -= 1
             l -= 1
@@ -1039,7 +1044,7 @@ def d_m_modulo(left,right,i,j,u):
         while l > -1:
             m = l + 1 
             while m > l-2 and m > right[j][0]: 
-                if(_matrix[get_entry(u,l)][get_entry(u-1,m)]) != 0:
+                if(_matrix[int(get_entry(u,l))][int(get_entry(u-1,m))]) != 0:
                     return True
                 m -= 1
             l -= 1
@@ -1061,13 +1066,16 @@ def d_m_generator(b): #Takes two halves. Grid state is inputted like [[((0, -0.5
     #TODO Do the f2-in and add to diff the value [from_simple_strands(leftern[0], u-0.5) , f_s_s(right,u)], [leftern[1], right], etc and then [left, rightern[0]], etc.
 
 
+
     for i in range(len(left)):
         for j in range(len(right)):
             if not d_m_modulo(left,right,i,j,u):
                 lefterino = left
                 righterino = right
-                lefterino[i][1] = right[j][0]
-                righterino[j][0] = left[i][1]
+                list(lefterino[i])[1] = right[j][0]
+                list(righterino[j])[0] = left[i][1]
+                lefterino = tuple(lefterino)
+                righterino = tuple(righterino)
 
                 #TODO Do the f2-in and add to diff the value [from_simple_strands(lefterino,u-0.5),f_s_s(righterino,u)]
 
@@ -1092,7 +1100,7 @@ for i in range(tangles):
 '''
 #print(gs(1)) #[[((0, -0.5), (0.5, 4.5)), ((0,0.5),(0.5, 0.5))], [((0.5, 5.5), (1, 4.5)), ((0.5, -0.5), (1, 3.5))]]
 
-print(d_minus_generator([[((0, -0.5), (0.5, 4.5))], [((0.5, 0.5), (1, 0.5)), ((0.5, 5.5), (1, 4.5)), ((0.5, -0.5), (1, 3.5))]]))
+print(d_m_generator([[((0, -0.5), (0.5, 4.5))], [((0.5, 0.5), (1, 0.5)), ((0.5, 5.5), (1, 4.5)), ((0.5, -0.5), (1, 3.5))]]))
 
 
 
