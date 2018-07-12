@@ -834,14 +834,12 @@ def alg_diff_generator_modulo_stupid_plus(b,i,j,u):
     if (2*u)%2 == 1:
         u = u + 0.5
 
-    for l in range(min(b[i][1], b[j][1]),max(b[i][1], b[j][1])):
+    for l in range(int(min(b[i][1], b[j][1])+0.5),int(max(b[i][1], b[j][1])+0.5)):
         arr.append(l)
-        if _matrix[get_entry(u,l)][get_entry(u-1,l)] != 0:
-            bool = True
-        for m in range(boundary_points):
-
-
-
+        for m in range(3):
+            if (0 <= u < tangles-1 and 0 <= l < boundary_points) and (0 <= u-1 < tangles-1 and 0 <= l-1+m < boundary_points):
+                if _matrix[get_entry(u,l)][get_entry(u-1,l-1+m)]:
+                    bool = True
     for k in range(len(b)):
         if b[i][1] < b[k][1] < b[j][1] and (b[k][0] > max(b[j][0],b[i][0]) or  b[k][0] < min(b[j][0],b[i][0])):
             bool = True
@@ -849,9 +847,6 @@ def alg_diff_generator_modulo_stupid_plus(b,i,j,u):
             arr.remove(l)
     if len(arr) > 0:
         bool = True
-
-
-    #TODO finish making the mod relations, so that orange strands as well 
 
     if bool:
         return bool
@@ -861,8 +856,13 @@ def alg_diff_generator_modulo_stupid_plus(b,i,j,u):
 def alg_diff_generator_modulo_stupid_minus(b,i,j,u):
     bool = False
     arr = []
-    for l in range(min(b[i][0], b[j][0]),max(b[i][0], b[j][0])):
+    for l in range(int(min(b[i][0], b[j][0])+0.5),int(max(b[i][0], b[j][0])+0.5)):
         arr.append(l)
+        for m in range(3):
+            if (0 <= u-1 < tangles-1 and 0 <= l < boundary_points) and (0 <= u < tangles-1 and 0 <= l-1+m < boundary_points):
+                if _matrix[get_entry(u-1,l)][get_entry(u,l-1+m)] != 0:
+                  bool = True
+
     for k in range(len(b)):
         if b[i][0] < b[k][0] < b[j][0] and (b[k][1] > max(b[j][1],b[i][1]) or  b[k][1] < min(b[j][1],b[i][1])):
             bool = True
@@ -870,8 +870,6 @@ def alg_diff_generator_modulo_stupid_minus(b,i,j,u):
             arr.remove(l)
     if len(arr) > 0:
         bool = True
-
-    #TODO finish making the mod relations, so that orange strands 
 
     if bool:
         return bool
@@ -903,9 +901,7 @@ def d_plus_half_stupid(b,u):
     return diff
 
 
-
-
-def d_minus_half(b, u): #Takes a half of a grid state and gives d_minus. b is the bijection, u is the position of the bijections range (so that A3-->B3 has u=3.5)
+def d_minus_half_stupid(b, u):
     diff = []
     for i in range(len(b)):
         j = i + 1
@@ -923,6 +919,31 @@ def d_minus_half(b, u): #Takes a half of a grid state and gives d_minus. b is th
                 if not(alg_diff_generator_modulo_stupid_minus(b,i,j,u) or orange_on_black_mod(b,i,j,u) or f2in(d , diff)):
                     diff.append(d)
                 elif not(alg_diff_generator_modulo_stupid_minus(b,i,j,u) or orange_on_black_mod(b,i,j,u)) and f2in(d , diff):
+                    diff.remove(f2in_permutation_finder(d , diff)[1])
+            j += 1
+        
+    return diff
+
+
+
+def d_minus_half(b, u): #Takes a half of a grid state and gives d_minus. b is the bijection, u is the position of the bijections range (so that A3-->B3 has u=3.5)
+    diff = []
+    for i in range(len(b)):
+        j = i + 1
+        while j < len(b):
+            d = []
+            for k in range(len(b)):
+                d.append(b[k])
+            if not(bsc(b[i], b[j])):
+                num1 = (list(b[i])[0], list(b[j])[1])
+                num2 = (list(b[j])[0], list(b[i])[1])
+                d.remove(b[i])
+                d.append(num1)
+                d.remove(b[j])
+                d.append(num2)
+                if not(alg_diff_generator_modulo(b,i,j,u) or orange_on_black_mod(b,i,j,u) or f2in(d , diff)):
+                    diff.append(d)
+                elif not(alg_diff_generator_modulo(b,i,j,u) or orange_on_black_mod(b,i,j,u)) and f2in(d , diff):
                     diff.remove(f2in_permutation_finder(d , diff)[1])
             j += 1
         
@@ -963,32 +984,95 @@ def d_minus_generator(b):  #Takes two halves. Grid state is inputted like [[((0,
             autre.remove(f2in_permutation_finder([from_simple_strands(arr[i],b[1][0][0][0]), b[1]] , autre)[1]) 
     return autre
 
+def d_m_modulo(left,right,i,j,u):
+    #jth strand of right and ith strand of left.
+    #method will tell me if the strands do the weird mod thing defined in petkova paper (3rd and 4th mod relations, the first two are coded as the stupid plus and minus mods for the stupid plus and stupid minus methods). thanks.
+    if left[i][1] < right[j][0]:
+        for k in range(len(left)):
+            if left[k][1] > left[i][1] and left[k][0] > left[i][0] and left[k][1] < right[j][0]:
+                return True
+        for k in range(len(right)):
+            if left[i][1] < right[k][0] < right[j][0]:
+                if bsc(right[k], right[j]):
+                    return True
+        l = left[i][1]+0.5
+        m = left[i][1]-0.5
+        while l < boundary_points:
+            m = l - 1
+            while m < l+2 and m > left[i][0]: 
+                if(_matrix[get_entry(u,l)][get_entry(u-1,m)]) != 0:
+                    return True
+                m += 1
+            l += 1
+
+        l = right[j][1]+0.5
+        m = right[j][1]-0.5
+        while l < boundary_points:
+            m = l - 1 
+            while m < l+2 and m < right[j][0]: 
+                if(_matrix[get_entry(u,l)][get_entry(u-1,m)]) != 0:
+                    return True
+                m += 1
+            l += 1
+
+    elif left[i][1] > right[j][0]: 
+        for k in range(len(left)):
+            if left[k][1] < left[i][1] and left[k][0] < left[i][0] and left[k][1] > right[j][0]:
+                return True
+        for k in range(len(right)):
+            if left[i][1] > right[k][0] > right[j][0]:
+                if bsc(right[k], right[j]):
+                    return True
+
+        l = left[i][1]-0.5
+        m = left[i][1]+0.5
+        while l > -1:
+            m = l + 1
+            while m > l-2 and m < left[i][0]: 
+                if(_matrix[get_entry(u,l)][get_entry(u-1,m)]) != 0:
+                    return True
+                m -= 1
+            l -= 1
+
+        l = right[j][1]-0.5
+        m = right[j][1]+0.5
+        while l > -1:
+            m = l + 1 
+            while m > l-2 and m > right[j][0]: 
+                if(_matrix[get_entry(u,l)][get_entry(u-1,m)]) != 0:
+                    return True
+                m -= 1
+            l -= 1
+
+    else:
+        print("ERROR: Invalid grid state. One of our beta curves is associated with more than one alpha curve.")
 
 def d_m_generator(b): #Takes two halves. Grid state is inputted like [[((0, -0.5), (0.5, 4.5))], [((0.5, 0.5), (1, 0.5)), ((0.5, 5.5), (1, 4.5)), ((0.5, -0.5), (1, 3.5))]]
+    diff = []
+    u = list(list(b[0][0])[0])[0] + 1
     left = to_simple_strands(b[0])
     right = to_simple_strands(b[1])
     #Now left and right are arrays of grid states
-    left = d_plus_half_stupid(left,t-0.5)
-    right = d_minus_half(right,t)
+    leftern = []
+    rightern = []
+    leftern = d_plus_half_stupid(left,u-0.5)
+    rightern = d_minus_half_stupid(right,u)
 
-    modmrelation = True
+    #TODO Do the f2-in and add to diff the value [from_simple_strands(leftern[0], u-0.5) , f_s_s(right,u)], [leftern[1], right], etc and then [left, rightern[0]], etc.
+
 
     for i in range(len(left)):
         for j in range(len(right)):
-            if modmrelation:
-                temp = left[i][1]
-                left[i][1] = right[j][0]
-                right[j][0] = temp
+            if not d_m_modulo(left,right,i,j,u):
+                lefterino = left
+                righterino = right
+                lefterino[i][1] = right[j][0]
+                righterino[j][0] = left[i][1]
 
+                #TODO Do the f2-in and add to diff the value [from_simple_strands(lefterino,u-0.5),f_s_s(righterino,u)]
 
+    return diff
 
-    #TODO add rest of the terms
-    #TODO add modular requirements for orange black
-
-
-
-
-#TODO d_m
 
 
 '''
@@ -1008,31 +1092,7 @@ for i in range(tangles):
 '''
 #print(gs(1)) #[[((0, -0.5), (0.5, 4.5)), ((0,0.5),(0.5, 0.5))], [((0.5, 5.5), (1, 4.5)), ((0.5, -0.5), (1, 3.5))]]
 
-
-print_heegard()
-
-print("wertgwer")
-
-print("diff 1")
-
-dile = alg_diff_generator([(-0.5,3.5), (1.5,1.5), (2.5, -0.5)])
-
-print(dile)
-
-print("diff twice")
-
-
-
-for i in range(len(dile)):
-    print(alg_diff_generator(dile[i]))
-
-print(f2in([(-0.5, -0.5), (2.5, 1.5), (1.5, 3.5)], alg_diff_generator(dile[0])))
-#print_heegard()
-
-print("-=----------------")
-
-print(alg_diff(alg_diff([[(5.5,4.5),(3.5,-0.5),(-0.5,0.5)],[(-0.5,-0.5),(2.5,1.5)]])))
-
+print(d_minus_generator([[((0, -0.5), (0.5, 4.5))], [((0.5, 0.5), (1, 0.5)), ((0.5, 5.5), (1, 4.5)), ((0.5, -0.5), (1, 3.5))]]))
 
 
 
