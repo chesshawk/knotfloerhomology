@@ -210,21 +210,43 @@ def asc(a,b):
                     return True
 
 def f2in_permutation_finder(elem, asshole): #This method searches for if any permutation of the list elem is in the list of lists asshole. If it is, the program returns which permutation of elem is in asshole by returning the index of this permutation in itertools.permutations(elem), along with the permutation of elem itself.
-    for i in range(len(list(itertools.permutations(elem)))):
-        if list(list(itertools.permutations(elem))[i]) in asshole:
-            return [i,list(list(itertools.permutations(elem))[i])]
+    for k in range(len(asshole)):
+        if sorted(elem) == sorted(asshole[k]):
+            return [1,asshole[k]]
     return [-1,"nope not in here"]
 
-
-def f2in_numarasi(elem, asshole): #This method returns just the index from f2in_permutation_finder. 
-    return f2in_permutation_finder(elem, asshole)[0]
-
-def f2in(elem, asshole):
-    #It returns true if the list elem or any permutations of elem is in the list of lists asshole.
-    if f2in_numarasi(elem, asshole) == -1:
-        return False
-    else:
+def f2in(elem, asshole): #It returns true if the list elem or any permutations of elem is in the list of lists asshole.
+    if f2in_permutation_finder(elem,asshole)[0] == 1:
         return True
+    else:
+        return False
+
+def f2add(d, diff):
+    if not(f2in(d, diff)):
+        diff.append(d)
+    else:
+        diff.remove(f2in_permutation_finder(d,diff)[1])
+
+
+def f3in_permutation_finder(elem, asshole): #This method searches for if any permutation of the two elements of elem, a list of size two, is in the list of lists asshole. If it is, the program returns which permutation of elem is in asshole by returning the index of this permutation in itertools.permutations(elem), along with the permutation of elem itself.
+    for k in range(len(asshole)):
+        if [sorted(elem[0]),sorted(elem[1])] == [sorted(list(asshole[k])[0]),sorted(list(asshole[k]))[1]]:
+            return [1,asshole[k]]
+    return [-1,"nope not in here"]
+
+def f3in(elem, asshole): #It returns true if the list elem or any permutations of elem is in the list of lists asshole.
+    if f3in_permutation_finder(elem,asshole)[0] == 1:
+        return True
+    else:
+        return False
+
+def f3add(d, diff):
+    if not(f3in(d, diff)):
+        diff.append(d)
+    else:
+        diff.remove(f3in_permutation_finder(d,diff)[1])
+
+
 
 
 def alg_mult (a, b): #imput is two elements of all_bij a[number of elements][bijection]
@@ -757,10 +779,7 @@ def ralg_diff_generator(b): #Reverse of algebra. Need to factor in the modular r
                 d.append(num1)
                 d.remove(b[j])
                 d.append(num2)
-                if not(f2in(d , diff)):
-                    diff.append(d)
-                elif f2in(d,diff):
-                    diff.remove(f2in_permutation_finder(d,diff)[1])
+                f2add(d, diff)
             j += 1
         
     return diff
@@ -967,10 +986,7 @@ def d_plus_generator(b):   #Takes two halves. Grid state is inputted like [[((0,
     autre = []
     arr = d_plus_half(to_simple_strands(b[1]),b[1][0][1][0])
     for i in range(len(arr)):
-        if not(f2in(from_simple_strands(arr[i],b[1][0][1][0]) , autre)):
-            autre.append(from_simple_strands(arr[i],b[1][0][1][0])) 
-        else:
-            autre.remove(f2in_permutation_finder(from_simple_strands(arr[i],b[1][0][1][0]) , autre)[1])
+        f2add(from_simple_strands(arr[i],b[1][0][1][0]) , autre)
     for j in range(len(autre)):
         autre[j] = [b[0],autre[j]]
     return autre
@@ -981,10 +997,7 @@ def d_minus_generator(b):  #Takes two halves. Grid state is inputted like [[((0,
     autre = []
     arr = d_minus_half(to_simple_strands(b[0]),b[1][0][0][0])
     for i in range(len(arr)):
-        if not(f2in(from_simple_strands(arr[i],b[1][0][0][0]) , autre)):
-            autre.append([from_simple_strands(arr[i],b[1][0][0][0]), b[1]]) 
-        elif f2in(from_simple_strands(arr[i],b[1][0][0][0]) , autre):
-            autre.remove(f2in_permutation_finder(from_simple_strands(arr[i],b[1][0][0][0]) , autre)[1]) 
+        f2add(from_simple_strands(arr[i],b[1][0][0][0]) , autre)    
     for j in range(len(autre)):
         autre[j] = [autre[j],b[1]]
     return autre
@@ -1053,6 +1066,7 @@ def d_m_modulo(left,right,i,j,u):
         print("ERROR: Invalid grid state. One of our beta curves is associated with more than one alpha curve.")
 
 def d_m_generator(b): #Takes two halves. Grid state is inputted like [[((0, -0.5), (0.5, 4.5))], [((0.5, 0.5), (1, 0.5)), ((0.5, 5.5), (1, 4.5)), ((0.5, -0.5), (1, 3.5))]]
+    #Outputs an array of two-halves (ie array of grid states.)
     diff = []
     u = list(list(b[0][0])[0])[0] + 1
     left = to_simple_strands(b[0])
@@ -1063,9 +1077,15 @@ def d_m_generator(b): #Takes two halves. Grid state is inputted like [[((0, -0.5
     leftern = d_plus_half_stupid(left,u-0.5)
     rightern = d_minus_half_stupid(right,u)
 
-    #TODO Do the f2-in and add to diff the value [from_simple_strands(leftern[0], u-0.5) , f_s_s(right,u)], [leftern[1], right], etc and then [left, rightern[0]], etc.
 
+        #Tricky cuz u have to permute b[0] and b[1] not b.
+    for i in range(len(leftern)):
+        d = [from_simple_strands(leftern[i], u-0.5) , from_simple_strands(right,u)]
+        f3add(d, diff)
 
+    for i in range(len(rightern)):
+        d = [from_simple_strands(left,u-0.5),from_simple_strands(rightern[i], u)]
+        f3add(d,diff)
 
     for i in range(len(left)):
         for j in range(len(right)):
@@ -1077,7 +1097,11 @@ def d_m_generator(b): #Takes two halves. Grid state is inputted like [[((0, -0.5
                 lefterino = tuple(lefterino)
                 righterino = tuple(righterino)
 
-                #TODO Do the f2-in and add to diff the value [from_simple_strands(lefterino,u-0.5),f_s_s(righterino,u)]
+                d = [from_simple_strands(lefterino,u-0.5),from_simple_strands(righterino,u)]
+                f3add(d, diff)
+
+                #TODO Do the f3-in and add to diff the value [from_simple_strands(lefterino,u-0.5),f_s_s(righterino,u)]
+
 
     return diff
 
