@@ -10,7 +10,7 @@ def get_max(list):
     return maximum
 #/ over \ is a + in the sequence, \ over / is a - in the sequence
 
-sequence = [1,1,1] #This is where you tell the program what crossings are present in the knot's tangle decomposition
+sequence = [1,4,1] #This is where you tell the program what crossings are present in the knot's tangle decomposition
 #If any element in the above array is zero I will find you and I will kill you. 
 
 #supposing notation is that i corresponds to a short crossing between i and i + 1
@@ -857,7 +857,7 @@ def alg_diff_generator_modulo_stupid_plus(b,i,j,u):
         arr.append(l)
         for m in range(3):
             if (0 <= u < tangles-1 and 0 <= l < boundary_points) and (0 <= u-1 < tangles-1 and 0 <= l-1+m < boundary_points):
-                if _matrix[get_entry(u,l)][get_entry(u-1,l-1+m)]:
+                if _matrix[int(get_entry(u,l))][int(get_entry(u-1,l-1+m))]:
                     bool = True
     for k in range(len(b)):
         if b[i][1] < b[k][1] < b[j][1] and (b[k][0] > max(b[j][0],b[i][0]) or  b[k][0] < min(b[j][0],b[i][0])):
@@ -1123,8 +1123,8 @@ for i in range(tangles):
     print(alpha_betas(i))
 '''
 #print(gs(1)) #[[((0, -0.5), (0.5, 4.5)), ((0,0.5),(0.5, 0.5))], [((0.5, 5.5), (1, 4.5)), ((0.5, -0.5), (1, 3.5))]]
-
-print(d_m_generator([[((0, -0.5), (0.5, 4.5))], [((0.5, 0.5), (1, 0.5)), ((0.5, 5.5), (1, 4.5)), ((0.5, -0.5), (1, 3.5))]]))
+print(boundary_points)
+print(d_m_generator([[((0, -0.5), (0.5, 9.5)), ((0,5.5),(0.5,7.5))], [((0.5, 0.5), (1, 0.5)), ((0.5, 5.5), (1, 4.5)), ((0.5, -0.5), (1, 3.5))]]))
 
 
 
