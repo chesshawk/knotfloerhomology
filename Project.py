@@ -1105,7 +1105,101 @@ def d_m_generator(b): #Takes two halves. Grid state is inputted like [[((0, -0.5
 
     return diff
 
+#modification: the orange tangles will be written like black strands
+orange = [[((0,0),(1,1)),((0,1),(1,0)),((0,2),(1,2))],[((1,0),(2,0)),((1,1),(2,2)),((1,2),(2,1))]]
 
+
+def doescross(a,b):
+    '''given a pair of lines = ((x_1, y_1), (x_2, y_2)), ((x_3, y_3), (x_4, y_4))
+    it does tells us whether they intersect''' 
+    
+    def line(p1, p2):
+        A = (p1[1] - p2[1])
+        B = (p2[0] - p1[0])
+        C = (p1[0]*p2[1] - p2[0]*p1[1])
+        return A, B, -C
+    
+    def intersection(L1, L2):
+        D  = L1[0] * L2[1] - L1[1] * L2[0]
+        Dx = L1[2] * L2[1] - L1[1] * L2[2]
+        Dy = L1[0] * L2[2] - L1[2] * L2[0]
+        if D != 0:
+            x = Dx / D
+            y = Dy / D
+            return x,y
+        else:
+            return False
+        
+    L1 = line(a[0],a[1])
+    L2 = line(b[0],b[1])
+    
+    R = intersection(L1, L2)
+    
+    if R:
+        return True
+    else:
+        return False
+    
+
+def bc_orange_twice(b_1, b_2, i, j):
+    '''given a black strand b_1 = ((x_1,y_1), (x_2,y_2)),b_2 = ((x_2,y_2), (x_3,y_3)) 
+    and tangle o at that given column x_1 ~ x_2( column i) and x_2 ~ x_3(column j) it will tells us
+    whether the given lackstrand crosses an orange strand twice'''
+    
+    for index, o_strand in enumerate (orange[i]):
+        # if they cross at column i
+        if doescross(b_1, o_strand):
+            #index of orange in j column
+            index_2 = domain(orange[j]).index(o_strand[1])         
+            if doescross(b_2, orange[j][index_2]):
+                return True
+            else:
+                return False
+        else:
+            return False
+
+def black_dc_orange(a,b,i,j):
+    '''given two black strands a and b in column i and j returns true if it doesn't violate figure 6 modulo relations
+    or returns false. '''
+    
+    is_violated = False
+    
+    for i,value in enumerate(a):
+        i_2 = domain(b).index(value[1])
+        if bc_orange_twice(value, b[i_2],i,j) == True:
+            is_violated = True
+    
+    return is_violated
+
+# a is idempotent for now
+def m_2(x,a):
+    ''' two inputs: a list x and an algebra element a
+    output is a concantenated to x on the right side, modulo certain relations in figure 6 
+    Note: if a and x cannot be concantenated then returns 0'''
+    
+    #modified x 
+    x_mod = x 
+    k = len(x)-1
+    #extract last x_k_plus that is to be modified
+    x_k_plus = x[k]
+    
+    if image(x_k_plus) == domain(a):
+        #if double black crossing
+        if (dsbc(x_k_plus, a) == True):
+            return 0
+        #if a blackstrand crosses one orange strand twice
+        elif (black_dc_orange(x_k_plus, a, k, k+1) == True):
+            return 0           
+        #if they can be concantenated
+        else:
+            for index,value in enumerate(x_k_plus):
+                x_k_plus[index][1]= (a[domain(a).index(value[1])][1])        
+            x_mod[len(x)-1] = x_k_plus
+            return x_mod
+        
+    else:
+        return 0
+    
 
 '''
 #Given two bijections l and r (for the left and right grid states of a generator of CT(T) for a given elementary tangle), spits out the differential computed using Heegard diagrams 
