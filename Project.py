@@ -1183,12 +1183,12 @@ def m_2(x,a):
     #extract last x_k_plus that is to be modified
     x_k_plus = x[k]
     
-    if image(x_k_plus) == domain(a):
+    if image(to_simple_strands(x_k_plus)) == domain(a):
         #if double black crossing
-        if (dsbc(x_k_plus, a) == True):
+        if (dbsc(to_simple_strands(x_k_plus), a) == True):
             return 0
         #if a blackstrand crosses one orange strand twice
-        elif (black_dc_orange(x_k_plus, a, k, k+1) == True):
+        elif (black_dc_orange(to_simple_strands(x_k_plus), a, k, k+1) == True):
             return 0           
         #if they can be concantenated
         else:
@@ -1220,6 +1220,8 @@ for i in range(tangles):
 print(boundary_points)
 print(d_m_generator([[((0, -0.5), (0.5, 9.5)), ((0,5.5),(0.5,7.5))], [((0.5, 0.5), (1, 0.5)), ((0.5, 5.5), (1, 4.5)), ((0.5, -0.5), (1, 3.5))]]))
 
+
+print(m_2([[((0, -0.5), (0.5, 9.5)), ((0,5.5),(0.5,7.5))], [((0.5, 0.5), (1, 0.5)), ((0.5, 5.5), (1, 4.5)), ((0.5, -0.5), (1, 3.5))]], [(0.5,0.5),(3.5,3.5),(4.5,4.5)]))
 
 
 
