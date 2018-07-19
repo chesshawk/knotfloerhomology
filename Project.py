@@ -1216,12 +1216,45 @@ for i in range(tangles):
     print(i)
     print(alpha_betas(i))
 '''
+
+'''For the method e_L^D as used in the Petkova paper'''
+def edl(b):
+    '''Input is b, a grid state. Output is an algebra element.'''
+    u = list(list(b[0][0])[0])[0]   
+    pts = []
+    for i in range(len(alpha_betas_helper(u))):
+        pts.append(list(alpha_betas_helper(u)[i])[1])
+    d = list(set(pts).difference(set(domain(to_simple_strands(b[0])))))
+    arr = []
+    for j in range(len(d)):
+        arr.append((d[j],d[j]))
+    return arr
+
+'''For the method e_R^A as used in the Petkova paper'''
+def era(b):
+    '''Input is b, a grid state. Output is an algebra element.'''
+    k = len(b)-1
+    u = list(list(b[k][0])[1])[0]   
+    pts = []
+    for i in range(len(alpha_betas_helper(u))):
+        pts.append(list(alpha_betas_helper(u)[i])[1])
+    d = image(to_simple_strands(b[k]))
+    arr = []
+    for j in range(len(d)):
+        arr.append((d[j],d[j]))
+    return arr
+
+
+
+
+
+
+
 #print(gs(1)) #[[((0, -0.5), (0.5, 4.5)), ((0,0.5),(0.5, 0.5))], [((0.5, 5.5), (1, 4.5)), ((0.5, -0.5), (1, 3.5))]]
 print(boundary_points)
-print(d_m_generator([[((0, -0.5), (0.5, 9.5)), ((0,5.5),(0.5,7.5))], [((0.5, 0.5), (1, 0.5)), ((0.5, 5.5), (1, 4.5)), ((0.5, -0.5), (1, 3.5))]]))
+print(edl([[((0, -0.5), (0.5, 9.5)), ((0,8.5),(0.5,9.5))], [((0.5, 0.5), (1, 0.5)), ((0.5, 5.5), (1, 4.5)), ((0.5, -0.5), (1, 3.5))]]))
 
-
-print(m_2([[((0, -0.5), (0.5, 9.5)), ((0,5.5),(0.5,7.5))], [((0.5, 0.5), (1, 0.5)), ((0.5, 5.5), (1, 4.5)), ((0.5, -0.5), (1, 3.5))]], [(0.5,0.5),(3.5,3.5),(4.5,4.5)]))
+#print(m_2([[((0, -0.5), (0.5, 9.5)), ((0,5.5),(0.5,7.5))], [((0.5, 0.5), (1, 0.5)), ((0.5, 5.5), (1, 4.5)), ((0.5, -0.5), (1, 3.5))]], [(0.5,0.5),(3.5,3.5),(4.5,4.5)]))
 
 
 
