@@ -46,6 +46,9 @@ def get_entry(x, y): #gets entry in the list of coordinates for the knot
     else:
         print("Out of Bounds") #TODO come back and figure this out with exceptions
 
+def good(x,y):
+    return 0 <= x < tangles-1 and 0 <= y < boundary_points
+
 def get_back(z): #inverse of get_entry
     if z > boundary_points * (tangles - 1):
         print("Too high, bruh")
@@ -879,7 +882,7 @@ def alg_diff_generator_modulo_stupid_minus(b,i,j,u):
         arr.append(l)
         for m in range(3):
             if (0 <= u-1 < tangles-1 and 0 <= l < boundary_points) and (0 <= u < tangles-1 and 0 <= l-1+m < boundary_points):
-                if _matrix[get_entry(u-1,l)][get_entry(u,l-1+m)] != 0:
+                if _matrix[int(get_entry(u-1,l))][int(get_entry(u,l-1+m))] != 0:
                   bool = True
 
     for k in range(len(b)):
@@ -1018,8 +1021,9 @@ def d_m_modulo(left,right,i,j,u):
         while l < boundary_points:
             m = l - 1
             while m < l+2 and m > left[i][0]: 
-                if(_matrix[int(get_entry(u,l))][int(get_entry(u-1,m))]) != 0:
-                    return True
+                if good(u,l) and good(u-1,m):
+                    if(_matrix[int(get_entry(u,l))][int(get_entry(u-1,m))]) != 0:
+                        return True
                 m += 1
             l += 1
 
@@ -1028,8 +1032,9 @@ def d_m_modulo(left,right,i,j,u):
         while l < boundary_points:
             m = l - 1 
             while m < l+2 and m < right[j][0]: 
-                if(_matrix[int(get_entry(u,l))][int(get_entry(u-1,m))]) != 0:
-                    return True
+                if good(u,l) and good(u-1,m):
+                    if(_matrix[int(get_entry(u,l))][int(get_entry(u-1,m))]) != 0:
+                        return True
                 m += 1
             l += 1
 
@@ -1047,8 +1052,9 @@ def d_m_modulo(left,right,i,j,u):
         while l > -1:
             m = l + 1
             while m > l-2 and m < left[i][0]: 
-                if(_matrix[int(get_entry(u,l))][int(get_entry(u-1,m))]) != 0:
-                    return True
+                if good(u,l) and good(u-1,m):
+                    if(_matrix[int(get_entry(u,l))][int(get_entry(u-1,m))]) != 0:
+                        return True
                 m -= 1
             l -= 1
 
@@ -1057,8 +1063,9 @@ def d_m_modulo(left,right,i,j,u):
         while l > -1:
             m = l + 1 
             while m > l-2 and m > right[j][0]: 
-                if(_matrix[int(get_entry(u,l))][int(get_entry(u-1,m))]) != 0:
-                    return True
+                if good(u,l) and good(u-1,m):
+                    if(_matrix[int(get_entry(u,l))][int(get_entry(u-1,m))]) != 0:
+                        return True
                 m -= 1
             l -= 1
 
@@ -1245,28 +1252,41 @@ def era(b):
     return arr
 
 def dl(b):
+    '''Input is b, a grid state. Output is a list of pairs [algebra element, CT element] that correspond to all the terms. If the output is like [[a_1, c_1], [a_2, c_2]] then it is to be interpreted as a_1 * c_1 + a_2 * c_2. Note that in this example c_1 and c_2 would themselves be grid states, which are represented in this code as lists of lists.'''
     u = list(list(b[0][0])[0])[0] 
+    global _matrix
     matrix_can_go_fuck_itself = _matrix
 
     for i in range(get_entry(u,0)):
         for j in range(get_entry(u,0)):
             _matrix[i][j] = 0
 
+    if (2*u)%2 == 1:
+        u += 0.5
+
+    if u == 0:
+        #CODE THIS SECTION LATER.
+
     for k in range(boundary_points):
-        _matrix[get_entry(u-1,k)][get_entry(u,k)] = sign_sequence(u)[k]
+        _matrix[int(get_entry(u-1,k))][int(get_entry(u,k))] = sign_sequence(u)[k]
+        _matrix[int(get_entry(u,k))][int(get_entry(u-1,k))] = sign_sequence(u)[k]*(-1)
 
     bmx = [from_simple_strands(edl(b),u),b[0]]
     bmx = d_m_generator(bmx)
-    b[0] = bmx[1]
+    diff = []
 
-    return [bmx[0],b]
+    for l in range(len(bmx)):
+        c = b
+        c[0] = bmx[l][1]
+        diff.append([to_simple_strands(bmx[l][0]),c])
+
+    return diff
+
     _matrix = matrix_can_go_fuck_itself
 
-def dl_algebra(b):
-    return dl(b)[0]
 
-def dl_ct(b):
-    return dl(b)[1]
+
+
 
 
 
@@ -1274,7 +1294,7 @@ def dl_ct(b):
 
 #print(gs(1)) #[[((0, -0.5), (0.5, 4.5)), ((0,0.5),(0.5, 0.5))], [((0.5, 5.5), (1, 4.5)), ((0.5, -0.5), (1, 3.5))]]
 print(boundary_points)
-print(edl([[((0, -0.5), (0.5, 9.5)), ((0,8.5),(0.5,9.5))], [((0.5, 0.5), (1, 0.5)), ((0.5, 5.5), (1, 4.5)), ((0.5, -0.5), (1, 3.5))]]))
+print(dl([[((1, -0.5), (1.5, 9.5)), ((1,8.5),(1.5,8.5))], [((1.5, 0.5), (2, 0.5)), ((1.5, 5.5), (2, 4.5)), ((1.5, -0.5), (2, 3.5))]]))
 
 #print(m_2([[((0, -0.5), (0.5, 9.5)), ((0,5.5),(0.5,7.5))], [((0.5, 0.5), (1, 0.5)), ((0.5, 5.5), (1, 4.5)), ((0.5, -0.5), (1, 3.5))]], [(0.5,0.5),(3.5,3.5),(4.5,4.5)]))
 
