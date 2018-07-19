@@ -1245,12 +1245,28 @@ def era(b):
     return arr
 
 def dl(b):
-    edl(b)
+    u = list(list(b[0][0])[0])[0] 
+    matrix_can_go_fuck_itself = _matrix
+
+    for i in range(get_entry(u,0)):
+        for j in range(get_entry(u,0)):
+            _matrix[i][j] = 0
+
+    for k in range(boundary_points):
+        _matrix[get_entry(u-1,k)][get_entry(u,k)] = sign_sequence(u)[k]
+
+    bmx = [from_simple_strands(edl(b),u),b[0]]
+    bmx = d_m_generator(bmx)
+    b[0] = bmx[1]
+
+    return [bmx[0],b]
+    _matrix = matrix_can_go_fuck_itself
 
 def dl_algebra(b):
+    return dl(b)[0]
 
-
-#def dl_ct(b):
+def dl_ct(b):
+    return dl(b)[1]
 
 
 
