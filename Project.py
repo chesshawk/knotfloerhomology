@@ -1244,7 +1244,9 @@ def era(b):
         arr.append((d[j],d[j]))
     return arr
 
+#def dl_algebra(b):
 
+#def dl_ct(b):
 
 
 
