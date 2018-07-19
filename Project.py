@@ -1266,6 +1266,8 @@ def dl(b):
 
     if u == 0:
         #CODE THIS SECTION LATER.
+        print("im g0nna w0rk 0n this later 0k")
+        return []
 
     for k in range(boundary_points):
         _matrix[int(get_entry(u-1,k))][int(get_entry(u,k))] = sign_sequence(u)[k]
