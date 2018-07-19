@@ -857,7 +857,7 @@ def alg_diff_generator_modulo_stupid_plus(b,i,j,u):
         arr.append(l)
         for m in range(3):
             if (0 <= u < tangles-1 and 0 <= l < boundary_points) and (0 <= u-1 < tangles-1 and 0 <= l-1+m < boundary_points):
-                if _matrix[int(get_entry(u,l))][int(get_entry(u-1,l-1+m))]:
+                if _matrix[int(get_entry(u,l))][int(get_entry(u-1,l-1+m))] != 0:
                     bool = True
     for k in range(len(b)):
         if b[i][1] < b[k][1] < b[j][1] and (b[k][0] > max(b[j][0],b[i][0]) or  b[k][0] < min(b[j][0],b[i][0])):
@@ -1244,7 +1244,11 @@ def era(b):
         arr.append((d[j],d[j]))
     return arr
 
-#def dl_algebra(b):
+def dl(b):
+    edl(b)
+
+def dl_algebra(b):
+
 
 #def dl_ct(b):
 
