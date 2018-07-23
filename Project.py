@@ -38,6 +38,31 @@ make_grid(coordinates)
 _matrix = [0] * len(coordinates)
 for i in range(len(coordinates)):
     _matrix[i] = [0] * len(coordinates)
+
+def orange_connects_to(i,j): #i and j are floats
+    '''Returns what happens if y0u start at (i,j) and g0 0ut al0ng 0range strand and see what p0int y0u hit.'''
+    if int(j) == j:
+        if j < (boundary_points-1)*0.5:
+            if i < caps:
+                    if i == j:
+                        return (i-0.5,(boundary_points-1)*0.5)
+                    elif i > j:
+                        return (i-0.5,j)
+            elif caps <= i <= tangles-2-caps:
+                    return (i-0.5, j)
+            elif tangles-2-caps < i <= tangles-2:
+                if i + j <= tangles-2:
+                    return (i-0.5, j)
+
+    else:
+        #only if its at the awakward middle part,...
+
+    elif i >= tangles-2-caps 
+
+
+def orange_connects_from(i,j):
+    '''Returns what happens if y0u start at (i,j) and f0ll0w an 0range strand the reverse directi0n 0f the arr0w and see what p0int y0u hit.'''
+    return 0 #TODO d0 this meth0d later
  
 def get_entry(x, y): #gets entry in the list of coordinates for the knot
     if 0 <= x < tangles-1 and 0 <= y < boundary_points:
