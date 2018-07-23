@@ -212,14 +212,14 @@ def asc(a,b):
                 if b[l][0] < b[l][1]:
                     return True
 
-def f2in_permutation_finder(elem, asshole): #This method searches for if any permutation of the list elem is in the list of lists asshole. If it is, the program returns which permutation of elem is in asshole by returning the index of this permutation in itertools.permutations(elem), along with the permutation of elem itself.
-    for k in range(len(asshole)):
-        if sorted(elem) == sorted(asshole[k]):
-            return [1,asshole[k]]
+def f2in_permutation_finder(elem, ass): #This method searches for if any permutation of the list elem is in the list of lists ass. If it is, the program returns which permutation of elem is in ass by returning the index of this permutation in itertools.permutations(elem), along with the permutation of elem itself.
+    for k in range(len(ass)):
+        if sorted(elem) == sorted(ass[k]):
+            return [1,ass[k]]
     return [-1,"nope not in here"]
 
-def f2in(elem, asshole): #It returns true if the list elem or any permutations of elem is in the list of lists asshole.
-    if f2in_permutation_finder(elem,asshole)[0] == 1:
+def f2in(elem, ass): #It returns true if the list elem or any permutations of elem is in the list of lists ass.
+    if f2in_permutation_finder(elem,ass)[0] == 1:
         return True
     else:
         return False
@@ -231,14 +231,14 @@ def f2add(d, diff):
         diff.remove(f2in_permutation_finder(d,diff)[1])
 
 
-def f3in_permutation_finder(elem, asshole): #This method searches for if any permutation of the two elements of elem, a list of size two, is in the list of lists asshole. If it is, the program returns which permutation of elem is in asshole by returning the index of this permutation in itertools.permutations(elem), along with the permutation of elem itself.
-    for k in range(len(asshole)):
-        if [sorted(elem[0]),sorted(elem[1])] == [sorted(list(asshole[k])[0]),sorted(list(asshole[k]))[1]]:
-            return [1,asshole[k]]
+def f3in_permutation_finder(elem, ass): #This method searches for if any permutation of the two elements of elem, a list of size two, is in the list of lists ass. If it is, the program returns which permutation of elem is in ass by returning the index of this permutation in itertools.permutations(elem), along with the permutation of elem itself.
+    for k in range(len(ass)):
+        if [sorted(elem[0]),sorted(elem[1])] == [sorted(list(ass[k])[0]),sorted(list(ass[k]))[1]]:
+            return [1,ass[k]]
     return [-1,"nope not in here"]
 
-def f3in(elem, asshole): #It returns true if the list elem or any permutations of elem is in the list of lists asshole.
-    if f3in_permutation_finder(elem,asshole)[0] == 1:
+def f3in(elem, ass): #It returns true if the list elem or any permutations of elem is in the list of lists ass.
+    if f3in_permutation_finder(elem,ass)[0] == 1:
         return True
     else:
         return False
@@ -1255,7 +1255,8 @@ def dl(b):
     '''Input is b, a grid state. Output is a list of pairs [algebra element, CT element] that correspond to all the terms. If the output is like [[a_1, c_1], [a_2, c_2]] then it is to be interpreted as a_1 * c_1 + a_2 * c_2. Note that in this example c_1 and c_2 would themselves be grid states, which are represented in this code as lists of lists.'''
     u = list(list(b[0][0])[0])[0] 
     global _matrix
-    matrix_can_go_fuck_itself = _matrix
+    
+    matrix_alt = _matrix
 
     for i in range(get_entry(u,0)):
         for j in range(get_entry(u,0)):
@@ -1284,7 +1285,7 @@ def dl(b):
 
     return diff
 
-    _matrix = matrix_can_go_fuck_itself
+    _matrix = matrix_alt
 
 
 
