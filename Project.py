@@ -10,7 +10,7 @@ def get_max(list):
     return maximum
 #/ over \ is a + in the sequence, \ over / is a - in the sequence
 
-sequence = [1,4,1] #This is where you tell the program what crossings are present in the knot's tangle decomposition
+sequence = [-1,2,4,3,-3,3,-3,3,1,4] #This is where you tell the program what crossings are present in the knot's tangle decomposition
 #If any element in the above array is zero I will find you and I will kill you. 
 
 #supposing notation is that i corresponds to a short crossing between i and i + 1
@@ -44,20 +44,57 @@ def orange_connects_to(i,j): #i and j are floats
     if int(j) == j:
         if j < (boundary_points-1)*0.5:
             if i < caps:
-                    if i == j:
-                        return (i-0.5,(boundary_points-1)*0.5)
-                    elif i > j:
-                        return (i-0.5,j)
+                if i == j:
+                    return (i-0.5,(boundary_points-1)*0.5)
+                elif i > j:
+                    return (i-0.5,j)
             elif caps <= i <= tangles-2-caps:
                     return (i-0.5, j)
             elif tangles-2-caps < i <= tangles-2:
                 if i + j <= tangles-2:
                     return (i-0.5, j)
+        else:
+            if i < caps-1:
+                if i+j >= boundary_points-1:
+                    return (i+0.5,j)
+            elif i >= tangles-2-(caps-1):
+                if i - j == 1:
+                    return (i+0.5,(boundary_points-1)*0.5)
+                elif i - j < 1:
+                    return (i+0.5,j)
+            else:
+                if abs(sequence[int(i-(caps-1))]) + j == boundary_points:
+                    if sequence[int(i-(caps-1))] < 0:
+                        if (2*i) %2 == 0:
+                            return (i+0.5,j-1)
+                        else:
+                            return (i+0.5,j)
+                    else:
+                        if (2*i) %2 == 1:
+                            return (i+0.5,j-1)
+                        else:
+                            return (i+0.5,j)
+                elif abs(sequence[int(i-(caps-1))]) + j == boundary_points - 1:
+                    if sequence[int(i-(caps-1))] < 0:
+                        if (2*i) %2 == 0:
+                            return (i+0.5,j+1)
+                        else:
+                            return (i+0.5,j)
+                    else:
+                        if (2*i) %2 == 1:
+                            return (i+0.5,j+1)
+                        else:
+                            return (i+0.5,j)
+                else:
+                    return (i+0.5,j)
 
-    else:
-        #only if its at the awakward middle part,...
+    elif 2*j == boundary_points-1:
+        if 0 <= i + 0.5 <= caps-1 and int(i+0.5) == i+0.5:
+            return (i+0.5, boundary_points-1-(i+0.5))
+        elif tangles-1-caps <= i - 0.5 <= tangles-2 and int(i+0.5) == i+0.5:
+            return (i-0.5,boundary_points-(i-0.5))
 
-    elif i >= tangles-2-caps 
+     
 
 
 def orange_connects_from(i,j):
@@ -1324,6 +1361,8 @@ def dl(b):
 #print(gs(1)) #[[((0, -0.5), (0.5, 4.5)), ((0,0.5),(0.5, 0.5))], [((0.5, 5.5), (1, 4.5)), ((0.5, -0.5), (1, 3.5))]]
 print(boundary_points)
 print(dl([[((1, -0.5), (1.5, 9.5)), ((1,8.5),(1.5,8.5))], [((1.5, 0.5), (2, 0.5)), ((1.5, 5.5), (2, 4.5)), ((1.5, -0.5), (2, 3.5))]]))
+
+print(orange_connects_to(5,5))
 
 #print(m_2([[((0, -0.5), (0.5, 9.5)), ((0,5.5),(0.5,7.5))], [((0.5, 0.5), (1, 0.5)), ((0.5, 5.5), (1, 4.5)), ((0.5, -0.5), (1, 3.5))]], [(0.5,0.5),(3.5,3.5),(4.5,4.5)]))
 
