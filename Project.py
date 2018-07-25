@@ -1,4 +1,5 @@
 import itertools
+import math
 sequence = []
 #import a signed sequence
 # get the max of the sequence in absolute value
@@ -10,7 +11,7 @@ def get_max(list):
     return maximum
 #/ over \ is a + in the sequence, \ over / is a - in the sequence
 
-sequence = [-1,2,4,3,-3,3,-3,3,1,4] #This is where you tell the program what crossings are present in the knot's tangle decomposition
+sequence = [-1,2,5,-3,-3,-3,-3,-3,3] #This is where you tell the program what crossings are present in the knot's tangle decomposition
 #If any element in the above array is zero I will find you and I will kill you. 
 
 #supposing notation is that i corresponds to a short crossing between i and i + 1
@@ -99,8 +100,54 @@ def orange_connects_to(i,j): #i and j are floats
 
 def orange_connects_from(i,j):
     '''Returns what happens if y0u start at (i,j) and f0ll0w an 0range strand the reverse directi0n 0f the arr0w and see what p0int y0u hit.'''
-    return 0 #TODO d0 this meth0d later
- 
+    if int(j) == j:
+        if 2*j < boundary_points-1:
+            if  i-j >= 0 and i+j < tangles-2:
+                return (i+0.5,j)
+            elif i + j == tangles-2:
+                return (i+0.5,(boundary_points-1)*0.5)
+        else:
+            if i+j > boundary_points-1 and i <= caps-1:
+                return (i-0.5,j)
+            elif i-j <= 1 and i > tangles-1-caps:
+                return (i-0.5,j)
+            elif caps-1 < i <= tangles-1-caps:
+                if abs(sequence[int(math.ceil(i-caps))]) + j == boundary_points:
+                    if sequence[int(math.ceil(i-caps))] > 0:
+                        if (2*i) %2 == 0:
+                            return (i-0.5,j-1)
+                        else:
+                            return (i-0.5,j)
+                    else:
+                        if (2*i) %2 == 1:
+                            return (i-0.5,j-1)
+                        else:
+                            return (i-0.5,j)
+                elif abs(sequence[int(math.ceil(i-caps))]) + j + 1 == boundary_points:
+                    if sequence[int(math.ceil(i-caps))] > 0:
+                        if (2*i) %2 == 0:
+                            return (i-0.5,j+1)
+                        else:
+                            return (i-0.5,j)
+                    else:
+                        if (2*i) %2 == 1:
+                            return (i-0.5,j+1)
+                        else:
+                            return (i-0.5,j)
+                else:
+                    return (i-0.5,j)
+            elif i + j == boundary_points-1:
+                return (i-0.5,(boundary_points-1)*0.5)
+
+
+    elif j == (boundary_points-1)*0.5:
+        if int(i) == i-0.5 and -0.5 <= i < caps-1:
+            return (i+0.5,i+0.5)
+        elif int(i) == i-0.5 and tangles-1-caps < i < tangles-1:
+            return (i-0.5,i-1.5)
+
+
+
 def get_entry(x, y): #gets entry in the list of coordinates for the knot
     if 0 <= x < tangles-1 and 0 <= y < boundary_points:
         x = boundary_points * x
@@ -1359,10 +1406,13 @@ def dl(b):
 
 
 #print(gs(1)) #[[((0, -0.5), (0.5, 4.5)), ((0,0.5),(0.5, 0.5))], [((0.5, 5.5), (1, 4.5)), ((0.5, -0.5), (1, 3.5))]]
-print(boundary_points)
-print(dl([[((1, -0.5), (1.5, 9.5)), ((1,8.5),(1.5,8.5))], [((1.5, 0.5), (2, 0.5)), ((1.5, 5.5), (2, 4.5)), ((1.5, -0.5), (2, 3.5))]]))
+#print(boundary_points)
+#print(dl([[((1, -0.5), (1.5, 9.5)), ((1,8.5),(1.5,8.5))], [((1.5, 0.5), (2, 0.5)), ((1.5, 5.5), (2, 4.5)), ((1.5, -0.5), (2, 3.5))]]))
 
-print(orange_connects_to(5,5))
+asdf = (5,5)
+for i in range(20):
+    print(asdf)    
+    asdf = orange_connects_from(list(asdf)[0],list(asdf)[1])
 
 #print(m_2([[((0, -0.5), (0.5, 9.5)), ((0,5.5),(0.5,7.5))], [((0.5, 0.5), (1, 0.5)), ((0.5, 5.5), (1, 4.5)), ((0.5, -0.5), (1, 3.5))]], [(0.5,0.5),(3.5,3.5),(4.5,4.5)]))
 
