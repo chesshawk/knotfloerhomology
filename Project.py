@@ -36,9 +36,17 @@ def make_grid(list):
             list.append((i,j))
 make_grid(coordinates)
 # number of coordinates is tangles times boundaries
+'''
+obsolescent
+'''
+
 _matrix = [0] * len(coordinates)
 for i in range(len(coordinates)):
     _matrix[i] = [0] * len(coordinates)
+
+'''
+obsolescent
+'''
 
 def orange_connects_to(i,j): #i and j are floats
     '''Returns what happens if y0u start at (i,j) and g0 0ut al0ng 0range strand and see what p0int y0u hit.'''
@@ -165,10 +173,15 @@ def get_back(z): #inverse of get_entry
     y = z%boundary_points
     return (x,y)
 def connected(x,y): #Input is two coordinates
-    if _matrix[get_entry(list(x)[0], list(x)[1])][get_entry(list(y)[0],list(y)[1])] != 0:
+    if orange_connects_to(list(x)[0], list(x)[1]) == get_entry(list(y)[0],list(y)[1]): 
         return True
     else:
         return False
+
+'''
+BEL0W IS 0BS0LESCENT C0DE
+'''
+
 
 for i in range(caps): #coding in the caps data
     _matrix[get_entry(i,i)][get_entry(i, boundary_points - i - 1)] = 1
@@ -204,6 +217,9 @@ for i in range(crossing_tangles):
             _matrix[get_entry(i+caps,boundary_points-j-1)][get_entry(i+caps-1,boundary_points-j-1)] = -1
             _matrix[get_entry(i+caps-1,boundary_points-j-1)][get_entry(i+caps,boundary_points-j-1)] = 1
 
+'''
+ABOVE IS 0BS0LESCENT C0DE
+'''
 
 
 '''
@@ -420,6 +436,15 @@ def grid_state(b):
     return grid_state
     '''
 
+def matrixer(i,j,k,l):
+    if orange_connects_to(i,j) == (k,l) or orange_connects_from(k,l) == (i,j):
+        return 1
+    elif orange_connects_from(i,j) == (k,l) or orange_connects_to(k,l) == (i,j):
+        return -1
+    else:
+        return 0
+
+
 #b is any bijection. Returns an array of all the possible bijections that it can be next to in a grid state
 
 #gets the sign sequence at the left edge of tangle i
@@ -430,18 +455,17 @@ def sign_sequence(i): #Returns an array representing the sign sequence along the
     for j in range(boundary_points):
         #print("j",j)
         if 0 <= i-1 < tangles-1 and 0 <= j-1 < boundary_points and signs[j] == 0:
-            signs[j] = -1 * _matrix[get_entry(i,j)][get_entry(i-1,j-1)] 
+            signs[j] = -1 * matrixer(i,j,i-1,j-1) 
         if 0 <= i-1 < tangles-1 and 0 <= j < boundary_points and signs[j] == 0:        
-            signs[j] = -1 * _matrix[get_entry(i,j)][get_entry(i-1,j)] 
+            signs[j] = -1 * matrixer(i,j,i-1,j) 
         if 0 <= i-1 < tangles-1 and 0 <= j+1 < boundary_points and signs[j] == 0:        
-            signs[j] = -1 * _matrix[get_entry(i,j)][get_entry(i-1,j+1)] 
-
+            signs[j] = -1 * matrixer(i,j,i-1,j+1) 
         if 0 <= i+1 < tangles-1 and 0 <= j-1 < boundary_points and signs[j] == 0:
-            signs[j] = 1 * _matrix[get_entry(i,j)][get_entry(i+1,j-1)] 
+            signs[j] = 1 * matrixer(i,j,i+1,j-1)
         if 0 <= i+1 < tangles-1 and 0 <= j < boundary_points and signs[j] == 0:
-            signs[j] = 1 * _matrix[get_entry(i,j)][get_entry(i+1,j)] 
+            signs[j] = 1 * matrixer(i,j,i+1,j) 
         if 0 <= i+1 < tangles-1 and 0 <= j+1 < boundary_points and signs[j] == 0:        
-            signs[j] = 1 * _matrix[get_entry(i,j)][get_entry(i+1,j+1)] 
+            signs[j] = 1 * matrixer(i,j,i+1,j+1)
             
     
     return signs
@@ -719,26 +743,26 @@ def left_heegard(i):
             if ss[hewler] == -1:
                 cappair = -1
                 for k in range(boundary_points):
-                    if _matrix[get_entry(i, hewler)][get_entry(i,k)] != 0:
+                    if matrixer(i, hewler,i,k) != 0:
                         cappair = k
                 left[hewler][min(cappair,hewler)] = "O"
             elif ss[hewler] == 1:
                 cappair = -1
                 for k in range(boundary_points):
-                    if _matrix[get_entry(i, hewler)][get_entry(i,k)] != 0:
+                    if matrixer(i, hewler,i,k) != 0:
                         cappair = k
                 left[hewler][min(cappair,hewler)] = "X"
         else:
             if sign_sequence(i+1)[hewler] == 0 and ss[hewler] == -1:
                 cappair = -1
                 for k in range(boundary_points):
-                    if _matrix[get_entry(i, hewler)][get_entry(i,k)] != 0:
+                    if matrixer(i, hewler,i,k) != 0:
                         cappair = k
                 left[hewler][min(cappair,hewler)] = "O"
             elif sign_sequence(i+1)[hewler] == 0 and ss[hewler] == 1:
                 cappair = -1
                 for k in range(boundary_points):
-                    if _matrix[get_entry(i, hewler)][get_entry(i,k)] != 0:
+                    if matrixer(i, hewler,i,k) != 0:
                         cappair = k
                 left[hewler][min(cappair,hewler)] = "X"
 
@@ -789,13 +813,13 @@ def right_heegard(i):
                 cappair = -1
                 for k in range(boundary_points):
                     #print("k=",k)
-                    if _matrix[get_entry(i, hewler)][get_entry(i,k)] != 0:
+                    if matrixer(i, hewler,i,k) != 0:
                         cappair = k
                 left[hewler][min(cappair,hewler)] = "X"
             elif sign_sequence(i-1)[hewler] == 0 and ss[hewler] == 1:
                 cappair = -1
                 for k in range(boundary_points):
-                    if _matrix[get_entry(i, hewler)][get_entry(i,k)] != 0:
+                    if matrixer(i, hewler,i,k) != 0:
                         cappair = k
                 left[hewler][min(cappair,hewler)] = "O"
 
@@ -816,13 +840,13 @@ def right_heegard(i):
                 cappair = -1
                 for k in range(boundary_points):
                     #print("k=",k)
-                    if _matrix[get_entry(i, hewler)][get_entry(i,k)] != 0:
+                    if matrixer(i, hewler,i,k) != 0:
                         cappair = k
                 left[hewler][min(cappair,hewler)] = "X"
             elif ss[hewler] == 1:
                 cappair = -1
                 for k in range(boundary_points):
-                    if _matrix[get_entry(i, hewler)][get_entry(i,k)] != 0:
+                    if matrixer(i, hewler,i,k) != 0:
                         cappair = k
                 left[hewler][min(cappair,hewler)] = "O"
 
@@ -924,11 +948,11 @@ def orange_on_black_mod(b,i,j,u): #Returns true if the ith and jth strands of bi
         while k < max(list(b[i])[0], list(b[j])[0]):
             if (2*u)%2 == 0:
                 for ass in range(int(min(list(b[i])[1], list(b[j])[1])), int(max(list(b[i])[1], list(b[j])[1]))):
-                    if _matrix[get_entry(int(u-1),k)][get_entry(int(u),ass)] != 0:
+                    if matrixer(int(u-1),k,int(u),ass) != 0:
                         return True
             else:
                 for ass in range(int(min(list(b[i])[1], list(b[j])[1])), int(max(list(b[i])[1], list(b[j])[1]))):
-                    if _matrix[get_entry(int(u-0.5),k)][get_entry(int(u+0.5),ass)] != 0:
+                    if matrixer(int(u-0.5),k,int(u+0.5),ass) != 0:
                         return True
 
             k = k+1
@@ -969,7 +993,7 @@ def alg_diff_generator_modulo_stupid_plus(b,i,j,u):
         arr.append(l)
         for m in range(3):
             if (0 <= u < tangles-1 and 0 <= l < boundary_points) and (0 <= u-1 < tangles-1 and 0 <= l-1+m < boundary_points):
-                if _matrix[int(get_entry(u,l))][int(get_entry(u-1,l-1+m))] != 0:
+                if matrixer(int(u),int(l),int(u-1),int(l-1+m)) != 0:
                     bool = True
     for k in range(len(b)):
         if b[i][1] < b[k][1] < b[j][1] and (b[k][0] > max(b[j][0],b[i][0]) or  b[k][0] < min(b[j][0],b[i][0])):
@@ -991,7 +1015,7 @@ def alg_diff_generator_modulo_stupid_minus(b,i,j,u):
         arr.append(l)
         for m in range(3):
             if (0 <= u-1 < tangles-1 and 0 <= l < boundary_points) and (0 <= u < tangles-1 and 0 <= l-1+m < boundary_points):
-                if _matrix[int(get_entry(u-1,l))][int(get_entry(u,l-1+m))] != 0:
+                if matrixer(int(u-1),int(l),int(u),int(l-1+m)) != 0:
                   bool = True
 
     for k in range(len(b)):
@@ -1131,7 +1155,7 @@ def d_m_modulo(left,right,i,j,u):
             m = l - 1
             while m < l+2 and m > left[i][0]: 
                 if good(u,l) and good(u-1,m):
-                    if(_matrix[int(get_entry(u,l))][int(get_entry(u-1,m))]) != 0:
+                    if matrixer(int(u),int(l),int(u-1),int(m)) != 0:
                         return True
                 m += 1
             l += 1
@@ -1142,7 +1166,7 @@ def d_m_modulo(left,right,i,j,u):
             m = l - 1 
             while m < l+2 and m < right[j][0]: 
                 if good(u,l) and good(u-1,m):
-                    if(_matrix[int(get_entry(u,l))][int(get_entry(u-1,m))]) != 0:
+                    if matrixer(int(u),int(l),int(u-1),int(m)) != 0:
                         return True
                 m += 1
             l += 1
@@ -1162,7 +1186,7 @@ def d_m_modulo(left,right,i,j,u):
             m = l + 1
             while m > l-2 and m < left[i][0]: 
                 if good(u,l) and good(u-1,m):
-                    if(_matrix[int(get_entry(u,l))][int(get_entry(u-1,m))]) != 0:
+                    if matrixer(int(u),int(l),int(u-1),int(m)) != 0:
                         return True
                 m -= 1
             l -= 1
@@ -1173,7 +1197,7 @@ def d_m_modulo(left,right,i,j,u):
             m = l + 1 
             while m > l-2 and m > right[j][0]: 
                 if good(u,l) and good(u-1,m):
-                    if(_matrix[int(get_entry(u,l))][int(get_entry(u-1,m))]) != 0:
+                    if matrixer(int(u),int(l),int(u-1),int(m)) != 0:
                         return True
                 m -= 1
             l -= 1
@@ -1360,6 +1384,7 @@ def era(b):
         arr.append((d[j],d[j]))
     return arr
 
+#TODO fix this shit. FIX the fuck out of this d_l method. Let _matrix have no more trace. Get it? Linear algebra puns.
 def dl(b):
     '''Input is b, a grid state. Output is a list of pairs [algebra element, CT element] that correspond to all the terms. If the output is like [[a_1, c_1], [a_2, c_2]] then it is to be interpreted as a_1 * c_1 + a_2 * c_2. Note that in this example c_1 and c_2 would themselves be grid states, which are represented in this code as lists of lists.'''
     u = list(list(b[0][0])[0])[0] 
