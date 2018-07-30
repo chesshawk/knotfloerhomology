@@ -1396,6 +1396,25 @@ def dl(b):
         for j in range(get_entry(u,0)):
             _matrix[i][j] = 0
 
+    def orange_connects_to_zero(i,j):
+        if 2*j < boundary_points-1 and i < u and int(j) == j:
+            return (i-0.5,j)            
+        elif i >= u:
+            return orange_connects_to(i,j)
+        elif 2*j > boundary_points-1 and i + 0.5 == u and int(j) == j:
+            return (u,j)
+
+    def orange_connects_from_zero(i,j):
+        if 2*j > boundary_points-1 and i < u and int(j) == j:
+            return (i-0.5,j)            
+        elif i >= u:
+            return orange_connects_from(i,j)
+        elif 2*j < boundary_points-1 and i + 0.5 == u and int(j) == j:
+            return (u,j)
+
+    #Am g0nna figure 0ut a lil later ig
+
+
     if (2*u)%2 == 1:
         u += 0.5
 
